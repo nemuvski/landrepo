@@ -1,0 +1,12 @@
+{
+  "extends": "tsconfig/apps/tsconfig.api.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "$/*": [
+        "./src/*"
+      ]
+    }
+  }
+}

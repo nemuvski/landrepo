@@ -1,0 +1,11 @@
+{
+  "name": "eslint-config-custom",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-regexp": "^1.9.0"
+  }
+}

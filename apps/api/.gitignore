@@ -1,0 +1,5 @@
+# production
+dist/
+
+# test
+.coverage/

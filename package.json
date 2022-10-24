@@ -1,0 +1,21 @@
+{
+  "name": "landrepo",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --check './**/*.{js,jsx,ts,tsx}'",
+    "format:fix": "prettier --write './**/*.{js,jsx,ts,tsx}'"
+  },
+  "devDependencies": {
+    "eslint": "^8.26.0",
+    "eslint-config-custom": "*",
+    "prettier": "^2.7.1",
+    "turbo": "^1.6.1"
+  }
+}
