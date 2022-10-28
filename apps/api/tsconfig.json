@@ -4,9 +4,9 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "$/*": [
-        "./src/*"
-      ]
+      "$config/*": ["config/*"],
+      "$core/*": [ "core/*"],
+      "$type/*": ["type/*"]
     }
   }
 }

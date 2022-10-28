@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { AuthModule } from '$/auth/auth.module'
-import { getEnvFilePaths, validateEnv } from '$/helpers/environments'
-import { UsersService } from '$/users/users.service'
+import { getEnvFilePaths, validateEnv } from '$config/environments'
+import { AuthModule } from '$core/auth/auth.module'
+import { UsersService } from '$core/users/users.service'
 
 @Module({
   imports: [
