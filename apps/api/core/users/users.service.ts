@@ -1,10 +1,5 @@
 import { Injectable } from '@nestjs/common'
-
-export interface UserEntity {
-  id: number
-  username: string
-  password: string
-}
+import { UserEntity } from '$core/users/entities/user.entity'
 
 @Injectable()
 export class UsersService {
