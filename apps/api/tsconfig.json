@@ -1,5 +1,5 @@
 {
-  "extends": "tsconfig/apps/tsconfig.api.json",
+  "extends": "@project/tsconfig/apps/tsconfig.api.json",
   "compilerOptions": {
     "outDir": "./dist",
     "baseUrl": "./",

@@ -13,8 +13,8 @@
     "format:fix": "prettier --write './**/*.{js,jsx,ts,tsx}'"
   },
   "devDependencies": {
+    "@project/eslint-config-custom": "*",
     "eslint": "^8.26.0",
-    "eslint-config-custom": "*",
     "prettier": "^2.7.1",
     "turbo": "^1.6.1"
   }
