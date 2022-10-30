@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  database:
+    container_name: database
+    build:
+      context: ./docker/database/
+      dockerfile: Dockerfile
+    image: landrepo/database:0.0.0
+    ports:
+      - "5432:5432"
+    volumes:
+      - database_data:/var/lib/postgresql/data:rw
+    env_file:
+      - docker/database/.env
+    environment:
+      POSTGRES_INITDB_ARGS: '--encoding=UTF-8 --locale=C'
+    logging:
+      driver: json-file
+      options:
+        max-size: '1m'
+        max-file: '1'
+
+volumes:
+  database_data:
+    driver: local
