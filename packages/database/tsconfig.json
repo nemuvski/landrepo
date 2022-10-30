@@ -1,0 +1,7 @@
+{
+  "extends": "@project/tsconfig/packages/tsconfig.database.json",
+  "include": ["scripts"],
+  "compilerOptions": {
+    "baseUrl": "./scripts"
+  }
+}

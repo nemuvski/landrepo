@@ -1,0 +1,5 @@
+# production
+dist/
+
+# local env files
+.env
