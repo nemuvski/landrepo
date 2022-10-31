@@ -55,10 +55,6 @@ cp apps/api/.env.example apps/api/.env.local
 cp apps/api/.env.example apps/api/.env.development.local
 
 
-# docker
-cp docker/database/.env.example docker/database/.env
-
-
 # packages/database
 cp packages/database/.env.example packages/database/.env
 ```

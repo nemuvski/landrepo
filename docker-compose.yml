@@ -11,10 +11,12 @@ services:
       - "5432:5432"
     volumes:
       - database_data:/var/lib/postgresql/data:rw
-    env_file:
-      - docker/database/.env
     environment:
       POSTGRES_INITDB_ARGS: '--encoding=UTF-8 --locale=C'
+      # NOTE: データベースのログイン情報等
+      POSTGRES_USER: 'landrepo_user'
+      POSTGRES_PASSWORD: 'landrepo_pwd'
+      POSTGRES_DB: 'landrepo'
     logging:
       driver: json-file
       options:
