@@ -2,6 +2,11 @@
   "name": "landrepo",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": ">=16.14.0",
+    "yarn": "please-use-npm",
+    "npm": ">=8.3.0"
+  },
   "workspaces": [
     "apps/*",
     "packages/*"
