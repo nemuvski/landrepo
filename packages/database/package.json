@@ -9,6 +9,8 @@
     "prisma:seed": "prisma db seed",
     "prisma:format": "prisma format",
     "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "prisma migrate dev --create-only",
+    "prisma:migrate:deploy": "prisma migrate deploy",
     "build": "npm run prisma:generate",
     "typecheck": "tsc --noEmit"
   },
