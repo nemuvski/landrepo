@@ -1,0 +1,13 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Query {
+  users: [UserModel!]
+}
+
+type UserModel {
+  id: String!
+  password: String!
+  username: String!
+}

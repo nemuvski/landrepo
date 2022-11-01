@@ -20,14 +20,18 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@nestjs/apollo": "^10.1.4",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.1.6",
+    "@nestjs/graphql": "^10.1.5",
     "@nestjs/jwt": "^9.0.0",
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^9.1.6",
     "@project/database": "*",
+    "apollo-server-express": "^3.10.4",
     "cross-env": "^7.0.3",
+    "graphql": "^16.6.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",

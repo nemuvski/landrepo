@@ -22,3 +22,11 @@ export function validateEnv(config: Record<string, string>) {
 
   return config
 }
+
+export function isProductionEnv() {
+  return process.env.NODE_ENV === 'production'
+}
+
+export function isDevelopmentEnv() {
+  return process.env.NODE_ENV === 'development'
+}
