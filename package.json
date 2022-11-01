@@ -12,6 +12,7 @@
     "packages/*"
   ],
   "scripts": {
+    "clean": "turbo run clean",
     "build:packages": "turbo run build --filter=@project/*",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",

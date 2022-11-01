@@ -1,5 +1,8 @@
 {
   "pipeline": {
+    "clean": {
+      "outputs": []
+    },
     "build": {
       "dependsOn": ["^build"]
     },
