@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
+import type { JwtPayload } from '$core/auth/interfaces/jwt-payload.interface'
 import type { UserModel } from '$core/users/models/user.model'
-import { JwtPayload } from '$core/auth/interfaces/jwt-payload.interface'
 import { UsersService } from '$core/users/users.service'
 
 @Injectable()
