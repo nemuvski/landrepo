@@ -50,9 +50,9 @@ cp apps/api/.env.example apps/api/.env.development.local
 
 
 # apps/web
-cp apps/api/.env.example apps/api/.env.local
+cp apps/web/.env.example apps/web/.env.local
 ## または次のファイル名で作成 (ただし、ビルドする際は .env.production.local ファイルも用意すること)
-cp apps/api/.env.example apps/api/.env.development.local
+cp apps/web/.env.example apps/web/.env.development.local
 
 
 # packages/database
