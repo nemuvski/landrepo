@@ -32,6 +32,10 @@ const nextConfig = {
   poweredByHeader: false,
   compiler: {
     removeConsole: isProductionMode ? { exclude: ['error', 'warn'] } : false,
+    emotion: {
+      // productionモードでビルドするときはsourcemapは出力しない
+      sourceMap: !isProductionMode,
+    },
   },
   env: {
     APP_VERSION: isProductionMode ? packageVersion : `${packageVersion}-${process.env.NODE_ENV}`,

@@ -4,5 +4,8 @@ declare namespace NodeJS {
 
     // 以下、アプリケーション内で利用するカスタムの環境変数の型定義
     readonly APP_VERSION: string
+
+    readonly NEXT_PUBLIC_SITE_NAME: string
+    readonly NEXT_PUBLIC_BASE_URL: string
   }
 }
