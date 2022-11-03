@@ -1,6 +1,7 @@
 import { DefaultSeo } from 'next-seo'
 import { clientEnv } from '~/helpers/client-env'
 import { getSiteUrlWithPath } from '~/helpers/urls'
+import UIProvider from '~/modules/ui/UIProvider'
 import type { AppPropsWithLayout } from '~/types/next'
 
 const siteName = clientEnv.NEXT_PUBLIC_SITE_NAME
@@ -34,7 +35,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         }}
       />
 
-      {getLayout(<Component {...pageProps} />)}
+      <UIProvider>{getLayout(<Component {...pageProps} />)}</UIProvider>
     </>
   )
 }
