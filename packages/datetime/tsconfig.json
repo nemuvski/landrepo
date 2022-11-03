@@ -2,7 +2,6 @@
   "extends": "@project/tsconfig/packages/tsconfig.datetime.json",
   "include": ["src"],
   "compilerOptions": {
-    "outDir": "./dist",
     "baseUrl": "./",
   }
 }

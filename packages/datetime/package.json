@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "files": ["dist/**"],
   "scripts": {
-    "build": "tsc",
+    "build": "tsup",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -14,5 +16,14 @@
   "devDependencies": {
     "@project/tsconfig": "*",
     "typescript": "^4.8.4"
+  },
+  "tsup": {
+    "entry": ["src/index.ts"],
+    "format": ["cjs", "esm"],
+    "splitting": false,
+    "sourcemap": false,
+    "minify": true,
+    "clean": true,
+    "dts": true
   }
 }
