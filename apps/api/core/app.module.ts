@@ -6,6 +6,7 @@ import { GraphQLModule } from '@nestjs/graphql'
 import { AppController } from '$core/app.controller'
 import { AuthModule } from '$core/auth/auth.module'
 import { getEnvFilePaths, isDevelopmentEnv, validateEnv } from '$core/common/helpers/env.helper'
+import { DatabaseModule } from '$core/database/database.module'
 import { UsersModule } from '$core/users/users.module'
 import { UsersService } from '$core/users/users.service'
 
@@ -24,6 +25,7 @@ import { UsersService } from '$core/users/users.service'
       autoSchemaFile: resolve(__dirname, '..', 'schema.graphql'),
       sortSchema: true,
     }),
+    DatabaseModule,
     AuthModule,
     UsersModule,
   ],

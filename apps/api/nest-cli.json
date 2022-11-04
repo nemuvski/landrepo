@@ -2,5 +2,20 @@
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
   "sourceRoot": "core",
-  "monorepo": true
+  "monorepo": true,
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@nestjs/graphql/plugin",
+        "options": {
+          "typeFileNameSuffix": [
+            ".input.ts",
+            ".args.ts",
+            ".entity.ts",
+            ".model.ts"
+          ]
+        }
+      }
+    ]
+  }
 }
