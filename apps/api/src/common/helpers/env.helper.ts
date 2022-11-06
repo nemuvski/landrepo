@@ -17,7 +17,9 @@ export function validateEnv(config: Record<string, string>) {
   }
 
   if (!NEST_JWT_SECRET_KEY || NEST_JWT_SECRET_KEY.length < MIN_LENGTH_JWT_SECRET_KEY) {
-    throw new Error('環境変数が未指定または条件を満たさない: NEST_JWT_SECRET_KEY (32文字以上)')
+    throw new Error(
+      `環境変数が未指定または条件を満たさない: NEST_JWT_SECRET_KEY (${MIN_LENGTH_JWT_SECRET_KEY}文字以上)`
+    )
   }
 
   return config

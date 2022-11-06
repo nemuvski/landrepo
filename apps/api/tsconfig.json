@@ -4,8 +4,8 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "$core/*": [ "core/*"],
-      "$type/*": ["type/*"]
+      "$/*": [ "src/*"],
+      "$generated/*": ["@generated/*"]
     }
   }
 }

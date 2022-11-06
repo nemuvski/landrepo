@@ -13,6 +13,8 @@
   ],
   "scripts": {
     "clean": "turbo run clean",
+    "build:api": "npm run build -w apps/api",
+    "build:web": "npm run build -w apps/web",
     "build:packages": "turbo run build --filter=@project/*",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",

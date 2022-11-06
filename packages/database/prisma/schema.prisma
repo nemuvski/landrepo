@@ -8,16 +8,41 @@ generator client {
   output   = "../dist"
 }
 
+// REF: https://github.com/unlight/prisma-nestjs-graphql#decorate
+generator nestgraqhpl {
+  provider               = "prisma-nestjs-graphql"
+  // NOTE: apps/apiに生成されるようにパス設定すること
+  output                 = "../../../apps/api/@generated"
+  fields_Validator_from  = "class-validator"
+  fields_Validator_input = true
+  decorate_1_type        = "CreateOneUserArgs"
+  decorate_1_field       = data
+  decorate_1_name        = ValidateNested
+  decorate_1_from        = "class-validator"
+  decorate_1_arguments   = "[]"
+  decorate_2_type        = "CreateOneUserArgs"
+  decorate_2_field       = data
+  decorate_2_from        = "class-transformer"
+  decorate_2_arguments   = "['() => {propertyType.0}']"
+  decorate_2_name        = Type
+}
+
 enum UserRole {
   GENERAL
   ADMIN
 }
 
 model User {
+  /// @Field(() => ID)
   id        String   @id @default(uuid())
+  /// @Field(() => String)
   role      UserRole @default(GENERAL)
+  /// @Validator.@IsEmail()
   email     String   @unique
+  /// @HideField()
   password  String
+  /// @HideField({ output: true, input: true })
   createdAt DateTime @default(now())
+  /// @HideField({ output: true, input: true })
   updatedAt DateTime @updatedAt
 }

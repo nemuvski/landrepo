@@ -1,6 +1,9 @@
 # production
 dist/
 
+# generated
+@generated/
+
 # test
 .coverage/
 

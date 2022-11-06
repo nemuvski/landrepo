@@ -2,12 +2,45 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Query {
-  users: [UserModel!]
+type Mutation {
+  createUser(data: UserCreateInput!): User!
+  signIn(input: SignInUserInput!): SignInUserResponse!
 }
 
-type UserModel {
-  id: String!
+type Query {
+  user(where: UserWhereUniqueInput!): User!
+}
+
+input SignInUserInput {
+  email: String!
   password: String!
-  username: String!
+}
+
+type SignInUserResponse {
+  access_token: String!
+  user: User!
+}
+
+type User {
+  """@Validator.@IsEmail()"""
+  email: String!
+  id: ID!
+  role: UserRole!
+}
+
+input UserCreateInput {
+  email: String!
+  id: String
+  password: String!
+  role: UserRole
+}
+
+enum UserRole {
+  ADMIN
+  GENERAL
+}
+
+input UserWhereUniqueInput {
+  email: String
+  id: String
 }

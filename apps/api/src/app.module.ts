@@ -3,12 +3,12 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
-import { AppController } from '$core/app.controller'
-import { AuthModule } from '$core/auth/auth.module'
-import { getEnvFilePaths, isDevelopmentEnv, validateEnv } from '$core/common/helpers/env.helper'
-import { DatabaseModule } from '$core/database/database.module'
-import { UsersModule } from '$core/users/users.module'
-import { UsersService } from '$core/users/users.service'
+import { AppController } from '$/app.controller'
+import { AuthModule } from '$/auth/auth.module'
+import { getEnvFilePaths, isDevelopmentEnv, validateEnv } from '$/common/helpers/env.helper'
+import { DatabaseModule } from '$/database/database.module'
+import { UsersModule } from '$/users/users.module'
+import { UsersService } from '$/users/users.service'
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { UsersService } from '$core/users/users.service'
       playground: isDevelopmentEnv(),
       debug: isDevelopmentEnv(),
       // NOTE: schemaファイルを出力するパスに相当
-      autoSchemaFile: resolve(__dirname, '..', 'schema.graphql'),
+      autoSchemaFile: resolve(process.cwd(), 'schema.graphql'),
       sortSchema: true,
     }),
     DatabaseModule,
