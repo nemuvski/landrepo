@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import type { CreateOneUserArgs } from '$generated/user/create-one-user.args'
-import type { FindUniqueUserArgs } from '$generated/user/find-unique-user.args'
+import type { CreateOneUserArgs } from '$nestgraphql/user/create-one-user.args'
+import type { FindUniqueUserArgs } from '$nestgraphql/user/find-unique-user.args'
 import { hashingPassword } from '$/common/helpers/crypto.helper'
 import { DatabaseService } from '$/database/database.service'
 

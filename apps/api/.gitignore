@@ -2,7 +2,7 @@
 dist/
 
 # generated
-@generated/
+@nestgraphql/
 
 # test
 .coverage/

@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { User } from '$generated/user/user.model'
+import { User } from '$nestgraphql/user/user.model'
 
 @ObjectType()
 export class SignInUserResponse {

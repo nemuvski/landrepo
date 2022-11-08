@@ -12,7 +12,7 @@ generator client {
 generator nestgraqhpl {
   provider               = "prisma-nestjs-graphql"
   // NOTE: apps/apiに生成されるようにパス設定すること
-  output                 = "../../../apps/api/@generated"
+  output                 = "../../../apps/api/@nestgraphql"
   fields_Validator_from  = "class-validator"
   fields_Validator_input = true
   decorate_1_type        = "CreateOneUserArgs"
@@ -34,15 +34,41 @@ enum UserRole {
 
 model User {
   /// @Field(() => ID)
-  id        String   @id @default(uuid())
+  id           String         @id @default(uuid()) @db.Uuid
   /// @Field(() => String)
-  role      UserRole @default(GENERAL)
+  role         UserRole       @default(GENERAL)
   /// @Validator.@IsEmail()
-  email     String   @unique
+  email        String         @unique
   /// @HideField()
-  password  String
+  password     String
   /// @HideField({ output: true, input: true })
-  createdAt DateTime @default(now())
+  createdAt    DateTime       @default(now())
   /// @HideField({ output: true, input: true })
-  updatedAt DateTime @updatedAt
+  updatedAt    DateTime       @updatedAt
+  /// @HideField({ output:false, input: false })
+  RefreshToken RefreshToken[]
+}
+
+model RefreshToken {
+  /// @HideField({ output:false, input: false })
+  id            String         @id @default(uuid()) @db.Uuid
+  /// @HideField({ output:false, input: false })
+  token         String
+  /// @HideField({ output:false, input: false })
+  ParentToken   RefreshToken?  @relation("ParentToken", fields: [parentTokenId], references: [id], onDelete: NoAction)
+  /// @HideField({ output:false, input: false })
+  parentTokenId String?        @unique @db.Uuid
+  // NOTE: ParentTokensを用意した意図 https://github.com/prisma/prisma/discussions/11743
+  /// @HideField({ output:false, input: false })s
+  ParentTokens  RefreshToken[] @relation("ParentToken")
+  /// @HideField({ output:false, input: false })
+  User          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// @HideField({ output:false, input: false })
+  userId        String         @db.Uuid
+  /// @HideField({ output:false, input: false })
+  revoked       Boolean        @db.Boolean
+  /// @HideField({ output:false, input: false })
+  createdAt     DateTime       @default(now())
+  /// @HideField({ output:false, input: false })
+  updatedAt     DateTime       @updatedAt
 }

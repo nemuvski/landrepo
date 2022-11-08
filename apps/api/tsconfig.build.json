@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src", "@generated"],
+  "include": ["src", "@nestgraphql"],
   "exclude": ["node_modules", "e2e", "dist", "**/*spec.ts"]
 }

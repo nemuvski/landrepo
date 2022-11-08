@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import type { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
 import type { JwtPayload } from '$/auth/interfaces/jwt-payload.interface'
-import type { User } from '$generated/user/user.model'
+import type { User } from '$nestgraphql/user/user.model'
 import { comparePassword } from '$/common/helpers/crypto.helper'
 import { UsersService } from '$/users/users.service'
 
