@@ -1,4 +1,4 @@
-import { PrismaClient } from '../client'
+import { PrismaClient } from '../dist'
 
 const prisma = new PrismaClient()
 
