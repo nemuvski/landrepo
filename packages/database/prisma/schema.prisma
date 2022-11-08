@@ -51,24 +51,24 @@ model User {
 
 model RefreshToken {
   /// @HideField({ output:false, input: false })
-  id            String         @id @default(uuid()) @db.Uuid
+  id            String        @id @default(uuid()) @db.Uuid
   /// @HideField({ output:false, input: false })
   token         String
   /// @HideField({ output:false, input: false })
-  ParentToken   RefreshToken?  @relation("ParentToken", fields: [parentTokenId], references: [id], onDelete: NoAction)
+  ParentToken   RefreshToken? @relation("TokenHistory", fields: [parentTokenId], references: [id], onDelete: NoAction)
   /// @HideField({ output:false, input: false })
-  parentTokenId String?        @unique @db.Uuid
-  // NOTE: ParentTokensを用意した意図 https://github.com/prisma/prisma/discussions/11743
-  /// @HideField({ output:false, input: false })s
-  ParentTokens  RefreshToken[] @relation("ParentToken")
+  parentTokenId String?       @unique @db.Uuid
+  // NOTE: ChildTokenを用意した意図 https://github.com/prisma/prisma/discussions/11743
   /// @HideField({ output:false, input: false })
-  User          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ChildToken    RefreshToken? @relation("TokenHistory")
   /// @HideField({ output:false, input: false })
-  userId        String         @db.Uuid
+  User          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   /// @HideField({ output:false, input: false })
-  revoked       Boolean        @db.Boolean
+  userId        String        @db.Uuid
   /// @HideField({ output:false, input: false })
-  createdAt     DateTime       @default(now())
+  revoked       Boolean       @db.Boolean
   /// @HideField({ output:false, input: false })
-  updatedAt     DateTime       @updatedAt
+  createdAt     DateTime      @default(now())
+  /// @HideField({ output:false, input: false })
+  updatedAt     DateTime      @updatedAt
 }
