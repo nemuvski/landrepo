@@ -1,8 +1,9 @@
 /** @type {import('eslint').Linter.Config} */
 const configs = {
-  plugins: ['regexp', 'import'],
+  plugins: ['regexp', 'import', '@typescript-eslint/eslint-plugin'],
   extends: ['plugin:regexp/recommended', 'prettier'],
   rules: {
+    '@typescript-eslint/consistent-type-imports': 'error',
     'import/order': [
       'warn',
       {

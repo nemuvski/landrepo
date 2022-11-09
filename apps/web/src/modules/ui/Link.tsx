@@ -1,7 +1,9 @@
 import { isString } from '@itsumono/utils'
-import { Anchor, AnchorProps, Button, ButtonProps } from '@mantine/core'
-import NextLink, { LinkProps as NextLinkProps } from 'next/link'
+import { Anchor, Button } from '@mantine/core'
+import NextLink from 'next/link'
 import type { RC } from '@itsumono/react'
+import type { AnchorProps, ButtonProps } from '@mantine/core'
+import type { LinkProps as NextLinkProps } from 'next/link'
 
 type LinkHref = string | URL
 

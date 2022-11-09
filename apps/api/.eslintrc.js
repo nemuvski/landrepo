@@ -10,7 +10,6 @@ module.exports = {
     tsconfigRootDir: __dirname,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
   extends: ['plugin:@typescript-eslint/recommended', '@project/eslint-config-custom'],
   rules: {
     '@typescript-eslint/no-unused-vars': ['warn', { ignoreRestSiblings: true }],
@@ -20,5 +19,5 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-empty-function': ['warn', { allow: ['constructors'] }],
   },
-  ignorePatterns: ['.eslintrc.js', 'dist'],
+  ignorePatterns: ['.eslintrc.js', 'dist', '@nestgraphql'],
 }
