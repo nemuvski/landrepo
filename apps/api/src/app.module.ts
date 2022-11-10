@@ -6,7 +6,12 @@ import { GraphQLModule } from '@nestjs/graphql'
 import type { ApolloDriverConfig } from '@nestjs/apollo'
 import { AppController } from '$/app.controller'
 import { AuthModule } from '$/auth/auth.module'
-import { getEnvFilePaths, isDevelopmentEnv, validateEnv } from '$/common/helpers/env.helper'
+import {
+  getEnvFilePaths,
+  isDevelopmentEnv,
+  validationEnvOptions,
+  validationEnvSchema,
+} from '$/common/helpers/env.helper'
 import { DatabaseModule } from '$/database/database.module'
 import { UsersModule } from '$/users/users.module'
 import { UsersService } from '$/users/users.service'
@@ -16,7 +21,8 @@ import { UsersService } from '$/users/users.service'
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: getEnvFilePaths(),
-      validate: validateEnv,
+      validationSchema: validationEnvSchema,
+      validationOptions: validationEnvOptions,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

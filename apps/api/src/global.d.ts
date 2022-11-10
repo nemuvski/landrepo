@@ -9,5 +9,6 @@ declare namespace NodeJS {
      * NOTE: dotenvファイルにて指定される
      */
     readonly NEST_JWT_SECRET_KEY: string
+    readonly NEST_JWT_REFRESH_SECRET_KEY: string
   }
 }

@@ -1,3 +1,5 @@
+import * as Joi from 'joi'
+
 const MIN_LENGTH_JWT_SECRET_KEY = 32 as const
 
 export function getEnvFilePaths() {
@@ -9,20 +11,15 @@ export function getEnvFilePaths() {
   return paths
 }
 
-export function validateEnv(config: Record<string, string>) {
-  const { NODE_ENV, NEST_JWT_SECRET_KEY } = config
+export const validationEnvSchema = Joi.object({
+  NODE_ENV: Joi.string().valid('development', 'production').required(),
+  NEST_JWT_SECRET_KEY: Joi.string().min(MIN_LENGTH_JWT_SECRET_KEY).required(),
+  NEST_JWT_REFRESH_SECRET_KEY: Joi.string().min(MIN_LENGTH_JWT_SECRET_KEY).required(),
+})
 
-  if (!NODE_ENV || !['development', 'production'].includes(NODE_ENV)) {
-    throw new Error('環境変数が未指定: NODE_ENV (development|production)')
-  }
-
-  if (!NEST_JWT_SECRET_KEY || NEST_JWT_SECRET_KEY.length < MIN_LENGTH_JWT_SECRET_KEY) {
-    throw new Error(
-      `環境変数が未指定または条件を満たさない: NEST_JWT_SECRET_KEY (${MIN_LENGTH_JWT_SECRET_KEY}文字以上)`
-    )
-  }
-
-  return config
+export const validationEnvOptions: Joi.ValidationOptions = {
+  allowUnknown: true,
+  abortEarly: true,
 }
 
 export function isProductionEnv() {
