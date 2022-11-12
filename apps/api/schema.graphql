@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Mutation {
   createUser(data: UserCreateInput!): User!
   signIn(input: SignInUserInput!): SignInUserResponse!
@@ -9,6 +14,133 @@ type Mutation {
 
 type Query {
   user(where: UserWhereUniqueInput!): User!
+}
+
+type RefreshToken {
+  ChildToken: RefreshToken
+  ParentToken: RefreshToken
+  User: User!
+  createdAt: DateTime!
+  id: ID!
+  parentTokenId: String
+  revoked: Boolean!
+  token: String!
+  updatedAt: DateTime!
+  userId: String!
+}
+
+type RefreshTokenCountAggregate {
+  _all: Int!
+  createdAt: Int!
+  id: Int!
+  parentTokenId: Int!
+  revoked: Int!
+  token: Int!
+  updatedAt: Int!
+  userId: Int!
+}
+
+input RefreshTokenCreateManyUserInput {
+  createdAt: DateTime
+  id: String
+  parentTokenId: String
+  revoked: Boolean!
+  token: String!
+  updatedAt: DateTime
+}
+
+input RefreshTokenCreateManyUserInputEnvelope {
+  data: [RefreshTokenCreateManyUserInput!]!
+  skipDuplicates: Boolean
+}
+
+input RefreshTokenCreateNestedManyWithoutUserInput {
+  connect: [RefreshTokenWhereUniqueInput!]
+  connectOrCreate: [RefreshTokenCreateOrConnectWithoutUserInput!]
+  create: [RefreshTokenCreateWithoutUserInput!]
+  createMany: RefreshTokenCreateManyUserInputEnvelope
+}
+
+input RefreshTokenCreateNestedOneWithoutChildTokenInput {
+  connect: RefreshTokenWhereUniqueInput
+  connectOrCreate: RefreshTokenCreateOrConnectWithoutChildTokenInput
+  create: RefreshTokenCreateWithoutChildTokenInput
+}
+
+input RefreshTokenCreateNestedOneWithoutParentTokenInput {
+  connect: RefreshTokenWhereUniqueInput
+  connectOrCreate: RefreshTokenCreateOrConnectWithoutParentTokenInput
+  create: RefreshTokenCreateWithoutParentTokenInput
+}
+
+input RefreshTokenCreateOrConnectWithoutChildTokenInput {
+  create: RefreshTokenCreateWithoutChildTokenInput!
+  where: RefreshTokenWhereUniqueInput!
+}
+
+input RefreshTokenCreateOrConnectWithoutParentTokenInput {
+  create: RefreshTokenCreateWithoutParentTokenInput!
+  where: RefreshTokenWhereUniqueInput!
+}
+
+input RefreshTokenCreateOrConnectWithoutUserInput {
+  create: RefreshTokenCreateWithoutUserInput!
+  where: RefreshTokenWhereUniqueInput!
+}
+
+input RefreshTokenCreateWithoutChildTokenInput {
+  ParentToken: RefreshTokenCreateNestedOneWithoutChildTokenInput
+  User: UserCreateNestedOneWithoutRefreshTokenInput!
+  createdAt: DateTime
+  id: String
+  revoked: Boolean!
+  token: String!
+  updatedAt: DateTime
+}
+
+input RefreshTokenCreateWithoutParentTokenInput {
+  ChildToken: RefreshTokenCreateNestedOneWithoutParentTokenInput
+  User: UserCreateNestedOneWithoutRefreshTokenInput!
+  createdAt: DateTime
+  id: String
+  revoked: Boolean!
+  token: String!
+  updatedAt: DateTime
+}
+
+input RefreshTokenCreateWithoutUserInput {
+  ChildToken: RefreshTokenCreateNestedOneWithoutParentTokenInput
+  ParentToken: RefreshTokenCreateNestedOneWithoutChildTokenInput
+  createdAt: DateTime
+  id: String
+  revoked: Boolean!
+  token: String!
+  updatedAt: DateTime
+}
+
+type RefreshTokenMaxAggregate {
+  createdAt: DateTime
+  id: String
+  parentTokenId: String
+  revoked: Boolean
+  token: String
+  updatedAt: DateTime
+  userId: String
+}
+
+type RefreshTokenMinAggregate {
+  createdAt: DateTime
+  id: String
+  parentTokenId: String
+  revoked: Boolean
+  token: String
+  updatedAt: DateTime
+  userId: String
+}
+
+input RefreshTokenWhereUniqueInput {
+  id: String
+  parentTokenId: String
 }
 
 input SignInUserInput {
@@ -22,16 +154,61 @@ type SignInUserResponse {
 }
 
 type User {
+  RefreshToken: [RefreshToken!]
+  _count: UserCount!
+
   """@Validator.@IsEmail()"""
   email: String!
   id: ID!
   role: UserRole!
 }
 
+type UserCount {
+  RefreshToken: Int!
+}
+
+type UserCountAggregate {
+  _all: Int!
+  email: Int!
+  id: Int!
+  role: Int!
+}
+
 input UserCreateInput {
+  RefreshToken: RefreshTokenCreateNestedManyWithoutUserInput
   email: String!
   id: String
   password: String!
+  role: UserRole
+}
+
+input UserCreateNestedOneWithoutRefreshTokenInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutRefreshTokenInput
+  create: UserCreateWithoutRefreshTokenInput
+}
+
+input UserCreateOrConnectWithoutRefreshTokenInput {
+  create: UserCreateWithoutRefreshTokenInput!
+  where: UserWhereUniqueInput!
+}
+
+input UserCreateWithoutRefreshTokenInput {
+  email: String!
+  id: String
+  password: String!
+  role: UserRole
+}
+
+type UserMaxAggregate {
+  email: String
+  id: String
+  role: UserRole
+}
+
+type UserMinAggregate {
+  email: String
+  id: String
   role: UserRole
 }
 

@@ -1,0 +1,8 @@
+{
+  "extends": "@project/tsconfig/packages/tsconfig.database.json",
+  "exclude": ["scripts"],
+  "compilerOptions": {
+    "noEmit": false,
+    "emitDecoratorMetadata": false
+  }
+}

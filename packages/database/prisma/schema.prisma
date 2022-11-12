@@ -11,8 +11,11 @@ generator client {
 // REF: https://github.com/unlight/prisma-nestjs-graphql#decorate
 generator nestgraqhpl {
   provider               = "prisma-nestjs-graphql"
-  // NOTE: apps/apiに生成されるようにパス設定すること
-  output                 = "../../../apps/api/@nestgraphql"
+  tsConfigFilePath       = "tsconfig.nestgraphql.json"
+  output                 = "../dist/graphql"
+  emitSingle             = true
+  emitCompiled           = true
+  purgeOutput            = false
   fields_Validator_from  = "class-validator"
   fields_Validator_input = true
   decorate_1_type        = "CreateOneUserArgs"

@@ -1,5 +1,6 @@
 # production
 dist/
+@nestgraphql/
 
 # local env files
 .env

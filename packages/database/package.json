@@ -12,7 +12,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev --create-only",
     "prisma:migrate:deploy": "prisma migrate deploy",
-    "prebuild": "rimraf ../../apps/api/@nestgraphql && npm run prisma:format",
+    "prebuild": "rimraf dist && npm run prisma:format",
     "build": "npm run prisma:generate",
     "typecheck": "tsc --noEmit"
   },

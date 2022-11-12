@@ -1,10 +1,8 @@
 import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { JwtAuthGuard } from '$/auth/jwt-auth.guard'
+import { CreateOneUserArgs, FindUniqueUserArgs, User } from '$/nestgraphql'
 import { UsersService } from '$/users/users.service'
-import { CreateOneUserArgs } from '$nestgraphql//user/create-one-user.args'
-import { FindUniqueUserArgs } from '$nestgraphql/user/find-unique-user.args'
-import { User } from '$nestgraphql/user/user.model'
 
 @Resolver(() => User)
 export class UsersResolver {
