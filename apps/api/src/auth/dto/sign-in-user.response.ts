@@ -1,10 +1,14 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import type { Tokens } from '$/auth/types/tokens.type'
 import { User } from '$/nestgraphql'
 
 @ObjectType()
-export class SignInUserResponse {
+export class SignInUserResponse implements Tokens {
   @Field(() => String)
-  access_token: string
+  accessToken: string
+
+  @Field(() => String)
+  refreshToken: string
 
   @Field(() => User)
   user: User

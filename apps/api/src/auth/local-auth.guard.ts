@@ -9,11 +9,18 @@ export class LocalAuthGuard extends AuthGuard('local') {
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context)
     const request = ctx.getContext()
-    /**
-     * @see {AuthResolver.signIn}
-     */
-    const { input } = ctx.getArgs<{ input: SignInUserInput }>()
-    request.body = input
+    if (request) {
+      /**
+       * @see {AuthResolver.signIn}
+       */
+      const { input } = ctx.getArgs<{ input: SignInUserInput }>()
+      /**
+       * `LocalStrategy` にemail,passwordを渡すためにパラメータをマッピング
+       *
+       * @see {LocalStrategy}
+       */
+      request.body = input
+    }
     return request
   }
 }

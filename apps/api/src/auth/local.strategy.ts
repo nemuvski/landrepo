@@ -1,10 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-local'
+import type { IPassportLocalStrategy } from '$/auth/interfaces/passport-strategy.interface'
 import { AuthService } from '$/auth/auth.service'
 
 @Injectable()
-export class LocalStrategy extends PassportStrategy(Strategy) {
+export class LocalStrategy extends PassportStrategy(Strategy) implements IPassportLocalStrategy {
   constructor(private authService: AuthService) {
     /**
      * NOTE: デフォルトではusernameフィールドとpasswordフィールドを扱うがusernameフィールドにemailフィールドを参照するように指定している

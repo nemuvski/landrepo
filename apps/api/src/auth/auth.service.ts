@@ -1,19 +1,25 @@
 import { Injectable } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
 import type { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
-import type { JwtPayload } from '$/auth/interfaces/jwt-payload.interface'
 import type { User } from '$/nestgraphql'
-import { comparePassword } from '$/common/helpers/crypto.helper'
+import { TokenService } from '$/auth/token.service'
+import { compareHashedValue } from '$/common/helpers/crypto.helper'
+import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
 import { UsersService } from '$/users/users.service'
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService, private jwtService: JwtService) {}
+  constructor(private usersService: UsersService, private tokenService: TokenService) {}
 
+  /**
+   * Userの有無とパスワードの比較し、一致すればUserエンティティを返却
+   *
+   * @param email メールアドレス
+   * @param password 平文のパスワード
+   */
   async validateUser(email: string, password: string) {
     const user = await this.usersService.findUnique({ where: { email } })
     if (user) {
-      const isMatched = await comparePassword(password, user.password)
+      const isMatched = await compareHashedValue(password, user.password)
       if (isMatched) {
         return user
       }
@@ -22,14 +28,38 @@ export class AuthService {
     return null
   }
 
-  async signIn(user: User) {
-    // ここない
-    console.log('AuthService.signIn', user)
-    const payload: JwtPayload = { email: user.email, sub: user.id }
-    const result: SignInUserResponse = {
-      access_token: this.jwtService.sign(payload),
+  /**
+   * トークンを発行
+   *
+   * @param user Userエンティティ
+   */
+  async signIn(user: User): Promise<SignInUserResponse> {
+    const sessionId = generateUUIDv4()
+    const tokens = this.tokenService.getTokens(user, sessionId)
+    await this.tokenService.insertRefreshToken(user, sessionId, tokens)
+    return {
+      ...tokens,
       user,
     }
-    return result
+  }
+
+  /**
+   * RefreshTokenテーブルに登録してある対象（現セッション）のトークンのレコードを削除
+   *
+   * @param user
+   */
+  async signOut(user: User): Promise<boolean> {
+    // TODO: 削除する
+    return true
+  }
+
+  /**
+   * トークンリフレッシュ
+   *
+   * @param user Userエンティティ
+   * @param authorizationValue 'Bearer XXX.YYY.ZZZ' といった形式の内容
+   */
+  async refreshToken(user: User, authorizationValue: string): Promise<void> {
+    // TODO: 更新する
   }
 }
