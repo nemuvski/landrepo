@@ -1,4 +1,5 @@
-import type { LocalStrategyValidateReturnType } from '$/auth/types/strategy.type'
+import type { JwtStrategyValidationReturnType, LocalStrategyValidateReturnType } from '$/auth/types/strategy.type'
+import type { IncomingMessage } from 'node:http'
 
 /**
  * NOTE: @UseGuards()のフローのメモ
@@ -8,6 +9,12 @@ import type { LocalStrategyValidateReturnType } from '$/auth/types/strategy.type
  * 3. 認証された(合致した)Userを`context`中の`user`フィールドに渡す
  */
 
-export interface WithLocalAuthGuardContext {
+type ContextBase = IncomingMessage
+
+export interface WithLocalAuthGuardContext extends ContextBase {
   user: LocalStrategyValidateReturnType
+}
+
+export interface WithJwtAuthGuardContext {
+  req: ContextBase & { user: JwtStrategyValidationReturnType }
 }

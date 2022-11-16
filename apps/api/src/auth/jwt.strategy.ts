@@ -5,16 +5,11 @@ import { ExtractJwt, Strategy } from 'passport-jwt'
 import type { IPassportJwtStrategy } from '$/auth/interfaces/passport-strategy.interface'
 import type { JwtPayload } from '$/auth/types/jwt-payload.type'
 import type { JwtStrategyValidationReturnType } from '$/auth/types/strategy.type'
-import { TokenService } from '$/auth/token.service'
 import { UsersService } from '$/users/users.service'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') implements IPassportJwtStrategy {
-  constructor(
-    private configService: ConfigService,
-    private usersService: UsersService,
-    private tokenService: TokenService
-  ) {
+  constructor(private configService: ConfigService, private usersService: UsersService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -27,15 +22,12 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') implements IP
     if (!user) {
       throw new UnauthorizedException()
     }
-    const refreshToken = await this.tokenService.fineUniqueRefreshToken({
-      where: { id_userId: { id: payload.sid, userId: payload.sub } },
-    })
-    if (!refreshToken) {
-      throw new UnauthorizedException()
-    }
+    /**
+     * NOTE: 返値はContextに含まれる
+     */
     return {
-      userEntity: user,
-      refreshTokenEntity: refreshToken,
+      ...user,
+      sid: payload.sid,
     }
   }
 }
