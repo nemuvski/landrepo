@@ -6,6 +6,7 @@ import type { JwtPayload } from '$/auth/types/jwt-payload.type'
 import type { Tokens } from '$/auth/types/tokens.type'
 import type { User } from '$/nestgraphql'
 import type { FindUniqueRefreshTokenArgs } from '$/nestgraphql'
+import type { DeleteOneRefreshTokenArgs } from '$/nestgraphql'
 import { JWT_REFRESH_TOKEN_EXPIRES_IN, JWT_TOKEN_EXPIRES_IN } from '$/auth/constants/jwt.constant'
 import { hashValue } from '$/common/helpers/crypto.helper'
 import { DatabaseService } from '$/database/database.service'
@@ -52,6 +53,15 @@ export class TokenService {
     const { refreshToken } = tokens
     const hashedToken = await hashValue(refreshToken)
     await this.databaseService.refreshToken.create({ data: { id: sid, userId: user.id, token: hashedToken } })
+  }
+
+  /**
+   * RefreshTokenテーブルからレコードを一意に1件削除
+   *
+   * @param args
+   */
+  async removeRefreshToken(args: DeleteOneRefreshTokenArgs) {
+    return this.databaseService.refreshToken.delete(args)
   }
 
   /**

@@ -46,20 +46,23 @@ export class AuthService {
   /**
    * RefreshTokenテーブルに登録してある対象（現セッション）のトークンのレコードを削除
    *
-   * @param user
+   * @param userId
+   * @param sessionId
    */
-  async signOut(user: User): Promise<boolean> {
-    // TODO: 削除する
+  async signOut(userId: string, sessionId: string): Promise<boolean> {
+    await this.tokenService.removeRefreshToken({ where: { id_userId: { userId, id: sessionId } } })
+    // エラーなく削除できた場合はtrueを返却するs
     return true
   }
 
   /**
    * トークンリフレッシュ
    *
-   * @param user Userエンティティ
+   * @param userId
+   * @param sessionId
    * @param authorizationValue 'Bearer XXX.YYY.ZZZ' といった形式の内容
    */
-  async refreshToken(user: User, authorizationValue: string): Promise<void> {
+  async updateRefreshToken(userId: string, sessionId: string, authorizationValue: string): Promise<void> {
     // TODO: 更新する
   }
 }
