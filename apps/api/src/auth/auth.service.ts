@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import type { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
 import type { User } from '$/nestgraphql'
 import { TokenService } from '$/auth/token.service'
-import { compareHashedValue } from '$/common/helpers/crypto.helper'
+import { compareHashedValue, hashValue } from '$/common/helpers/crypto.helper'
+import { getTokenByAuthorizationHeader } from '$/common/helpers/http-header.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
 import { UsersService } from '$/users/users.service'
 
@@ -36,7 +37,10 @@ export class AuthService {
   async signIn(user: User): Promise<SignInUserResponse> {
     const sessionId = generateUUIDv4()
     const tokens = this.tokenService.getTokens(user, sessionId)
-    await this.tokenService.insertRefreshToken(user, sessionId, tokens)
+    const hashedToken = await hashValue(tokens.refreshToken)
+    await this.tokenService.insertRefreshToken({
+      data: { id: sessionId, User: { connect: { id: user.id } }, token: hashedToken },
+    })
     return {
       ...tokens,
       user,
@@ -51,18 +55,42 @@ export class AuthService {
    */
   async signOut(userId: string, sessionId: string): Promise<boolean> {
     await this.tokenService.removeRefreshToken({ where: { id_userId: { userId, id: sessionId } } })
-    // エラーなく削除できた場合はtrueを返却するs
+    // エラーなく削除できた場合はtrueを返却する
     return true
   }
 
   /**
-   * トークンリフレッシュ
+   * トークンの再発行（リフレッシュトークン）
    *
-   * @param userId
+   * @param user Userエンティティ
    * @param sessionId
    * @param authorizationValue 'Bearer XXX.YYY.ZZZ' といった形式の内容
    */
-  async updateRefreshToken(userId: string, sessionId: string, authorizationValue: string): Promise<void> {
-    // TODO: 更新する
+  async reissueTokens(user: User, sessionId: string, authorizationValue?: string): Promise<SignInUserResponse> {
+    const targetRefreshToken = await this.tokenService.findRefreshToken({
+      where: { id_userId: { userId: user.id, id: sessionId } },
+    })
+    if (!authorizationValue || !targetRefreshToken) {
+      throw new UnauthorizedException()
+    }
+
+    const currentRefreshToken = getTokenByAuthorizationHeader(authorizationValue)
+    // FIXME: なぜか毎回trueを返しているので修正すること
+    const isMatched = await compareHashedValue(currentRefreshToken, targetRefreshToken.token)
+    if (!isMatched) {
+      throw new UnauthorizedException()
+    }
+
+    const newTokens = this.tokenService.getTokens(user, sessionId)
+    const hashedToken = await hashValue(newTokens.refreshToken)
+    await this.tokenService.updateRefreshToken({
+      data: { token: { set: hashedToken } },
+      where: { id_userId: { userId: user.id, id: sessionId } },
+    })
+
+    return {
+      ...newTokens,
+      user,
+    }
   }
 }

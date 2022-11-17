@@ -23,4 +23,18 @@ export class AuthResolver {
     const { id, sid } = context.req.user
     return this.authService.signOut(id, sid)
   }
+
+  @Mutation(() => SignInUserResponse)
+  @UseGuards(JwtRefreshAuthGuard)
+  reissueTokens(@Context() context: WithJwtAuthGuardContext) {
+    const { sid, ...user } = context.req.user
+    /**
+     * JwtRefreshAuthGuardで保護しているため、authorizationValueが空というケースは考えられないが
+     * サービスのメソッドにて、値がundefinedであるケースはケアしておくこと
+     *
+     * @see {JwtRefreshAuthGuard}
+     */
+    const authorizationValue = context.req.headers.authorization
+    return this.authService.reissueTokens(user, sid, authorizationValue)
+  }
 }

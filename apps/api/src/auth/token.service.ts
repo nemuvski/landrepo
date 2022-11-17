@@ -7,8 +7,9 @@ import type { Tokens } from '$/auth/types/tokens.type'
 import type { User } from '$/nestgraphql'
 import type { FindUniqueRefreshTokenArgs } from '$/nestgraphql'
 import type { DeleteOneRefreshTokenArgs } from '$/nestgraphql'
+import type { UpdateOneRefreshTokenArgs } from '$/nestgraphql'
+import type { CreateOneRefreshTokenArgs } from '$/nestgraphql'
 import { JWT_REFRESH_TOKEN_EXPIRES_IN, JWT_TOKEN_EXPIRES_IN } from '$/auth/constants/jwt.constant'
-import { hashValue } from '$/common/helpers/crypto.helper'
 import { DatabaseService } from '$/database/database.service'
 
 @Injectable()
@@ -45,14 +46,10 @@ export class TokenService {
   /**
    * RefreshTokenテーブルへレコードを追加
    *
-   * @param user Userエンティティ
-   * @param sid 予め生成しておいたセッションID
-   * @param tokens トークン
+   * @param args
    */
-  async insertRefreshToken(user: User, sid: string, tokens: Tokens) {
-    const { refreshToken } = tokens
-    const hashedToken = await hashValue(refreshToken)
-    await this.databaseService.refreshToken.create({ data: { id: sid, userId: user.id, token: hashedToken } })
+  async insertRefreshToken(args: CreateOneRefreshTokenArgs) {
+    return this.databaseService.refreshToken.create(args)
   }
 
   /**
@@ -65,11 +62,20 @@ export class TokenService {
   }
 
   /**
+   * RefreshTokenテーブルのレコードを1件更新
+   *
+   * @param args
+   */
+  async updateRefreshToken(args: UpdateOneRefreshTokenArgs) {
+    return this.databaseService.refreshToken.update(args)
+  }
+
+  /**
    * RefreshTokenテーブルからレコードを一意に1件取得
    *
    * @param args
    */
-  async fineUniqueRefreshToken(args: FindUniqueRefreshTokenArgs) {
+  async findRefreshToken(args: FindUniqueRefreshTokenArgs) {
     return this.databaseService.refreshToken.findUnique(args)
   }
 }
