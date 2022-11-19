@@ -9,6 +9,9 @@ const configs = {
   },
   collectCoverageFrom: ['**/*.(t|j)s'],
   coverageDirectory: './.coverage',
+  moduleNameMapper: {
+    '^\\$/(.*)$': '<rootDir>/$1',
+  },
 }
 
 module.exports = configs
