@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common'
 import type { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
 import type { User } from '$/nestgraphql'
 import { TokenService } from '$/auth/token.service'
-import { compareHashedValue, hashValue } from '$/common/helpers/crypto.helper'
+import { compareHashedValueWithBcrypt, hashValueWithBcrypt } from '$/common/helpers/hash.helper'
 import { getTokenByAuthorizationHeader } from '$/common/helpers/http-header.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
 import { UsersService } from '$/users/users.service'
@@ -20,7 +20,7 @@ export class AuthService {
   async validateUser(email: string, password: string) {
     const user = await this.usersService.findUnique({ where: { email } })
     if (user) {
-      const isMatched = await compareHashedValue(password, user.password)
+      const isMatched = await compareHashedValueWithBcrypt(password, user.password)
       if (isMatched) {
         return user
       }
@@ -37,7 +37,7 @@ export class AuthService {
   async signIn(user: User): Promise<SignInUserResponse> {
     const sessionId = generateUUIDv4()
     const tokens = this.tokenService.getTokens(user, sessionId)
-    const hashedToken = await hashValue(tokens.refreshToken)
+    const hashedToken = await hashValueWithBcrypt(tokens.refreshToken)
     await this.tokenService.insertRefreshToken({
       data: { id: sessionId, User: { connect: { id: user.id } }, token: hashedToken },
     })
@@ -76,13 +76,13 @@ export class AuthService {
 
     const currentRefreshToken = getTokenByAuthorizationHeader(authorizationValue)
     // FIXME: なぜか毎回trueを返しているので修正すること
-    const isMatched = await compareHashedValue(currentRefreshToken, targetRefreshToken.token)
+    const isMatched = await compareHashedValueWithBcrypt(currentRefreshToken, targetRefreshToken.token)
     if (!isMatched) {
       throw new UnauthorizedException()
     }
 
     const newTokens = this.tokenService.getTokens(user, sessionId)
-    const hashedToken = await hashValue(newTokens.refreshToken)
+    const hashedToken = await hashValueWithBcrypt(newTokens.refreshToken)
     await this.tokenService.updateRefreshToken({
       data: { token: { set: hashedToken } },
       where: { id_userId: { userId: user.id, id: sessionId } },
