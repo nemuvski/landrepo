@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@project/tsconfig": "*",
-    "typescript": "^4.8.4"
+    "typescript": "^4.9.3"
   },
   "tsup": {
     "entry": ["src/index.ts"],
