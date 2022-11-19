@@ -1,10 +1,14 @@
 {
-  "extends": "@project/tsconfig/apps/tsconfig.api.json",
+  "extends": "@project/tsconfig/tsconfig.node.json",
   "compilerOptions": {
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
       "$/*": [ "src/*"]
-    }
+    },
+
+    "noEmit": false,
+    "strictPropertyInitialization": false,
+    "importsNotUsedAsValues": "remove"
   }
 }

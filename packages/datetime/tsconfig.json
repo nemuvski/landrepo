@@ -1,7 +1,10 @@
 {
-  "extends": "@project/tsconfig/packages/tsconfig.datetime.json",
+  "extends": "@project/tsconfig/tsconfig.node.json",
   "include": ["src"],
   "compilerOptions": {
     "baseUrl": "./",
+
+    "sourceMap": false,
+    "incremental": false
   }
 }

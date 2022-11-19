@@ -1,5 +1,5 @@
 {
-  "extends": "@project/tsconfig/packages/tsconfig.database.json",
+  "extends": "@project/tsconfig/tsconfig.node.json",
   "exclude": ["scripts"],
   "compilerOptions": {
     "noEmit": false,
