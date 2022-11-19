@@ -65,6 +65,8 @@ model RefreshToken {
   createdAt DateTime @default(now())
   /// @HideField({ output:false, input: false })
   updatedAt DateTime @updatedAt
+  /// @HideField({ output:false, input: false })
+  expiresIn DateTime
 
   @@id([id, userId])
 }

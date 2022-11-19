@@ -1,8 +1,13 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { datetime } from '@project/datetime'
 import type { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
 import type { User } from '$/nestgraphql'
 import { TokenService } from '$/auth/token.service'
-import { compareHashedValueWithBcrypt, hashValueWithBcrypt } from '$/common/helpers/hash.helper'
+import {
+  compareHashedValueWithBcrypt,
+  compareHashedValueWithSHA512,
+  hashValueWithSHA512,
+} from '$/common/helpers/hash.helper'
 import { getTokenByAuthorizationHeader } from '$/common/helpers/http-header.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
 import { UsersService } from '$/users/users.service'
@@ -36,10 +41,15 @@ export class AuthService {
    */
   async signIn(user: User): Promise<SignInUserResponse> {
     const sessionId = generateUUIDv4()
-    const tokens = this.tokenService.getTokens(user, sessionId)
-    const hashedToken = await hashValueWithBcrypt(tokens.refreshToken)
-    await this.tokenService.insertRefreshToken({
-      data: { id: sessionId, User: { connect: { id: user.id } }, token: hashedToken },
+    const [tokens, expirationTimeSec] = this.tokenService.getTokens(user, sessionId)
+    const hashedToken = hashValueWithSHA512(tokens.refreshToken)
+    await this.tokenService.createRefreshToken({
+      data: {
+        id: sessionId,
+        User: { connect: { id: user.id } },
+        token: hashedToken,
+        expiresIn: datetime.unix(expirationTimeSec).toISOString(),
+      },
     })
     return {
       ...tokens,
@@ -75,16 +85,15 @@ export class AuthService {
     }
 
     const currentRefreshToken = getTokenByAuthorizationHeader(authorizationValue)
-    // FIXME: なぜか毎回trueを返しているので修正すること
-    const isMatched = await compareHashedValueWithBcrypt(currentRefreshToken, targetRefreshToken.token)
+    const isMatched = compareHashedValueWithSHA512(currentRefreshToken, targetRefreshToken.token)
     if (!isMatched) {
       throw new UnauthorizedException()
     }
 
-    const newTokens = this.tokenService.getTokens(user, sessionId)
-    const hashedToken = await hashValueWithBcrypt(newTokens.refreshToken)
+    const [newTokens, expirationTimeSec] = this.tokenService.getTokens(user, sessionId)
+    const hashedToken = hashValueWithSHA512(newTokens.refreshToken)
     await this.tokenService.updateRefreshToken({
-      data: { token: { set: hashedToken } },
+      data: { token: { set: hashedToken }, expiresIn: { set: datetime.unix(expirationTimeSec).toISOString() } },
       where: { id_userId: { userId: user.id, id: sessionId } },
     })
 

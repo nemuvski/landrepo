@@ -5,7 +5,7 @@ import {
   hashValueWithSHA512,
 } from '$/common/helpers/hash.helper'
 
-describe('common/helpers/http-header.helper.ts', () => {
+describe('common/helpers/hash.helper.ts', () => {
   test('compareHashedValueWithBcrypt()', async () => {
     // 72文字
     const plainValue = 'RlVfiZ1J7nFsHgTIuxXU0HVkyVchu75H3o7OEpNnFZrDS8JstKp8qgPHzgF1F3U3Qtw27KiI'

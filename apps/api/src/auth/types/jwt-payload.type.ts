@@ -20,6 +20,8 @@ interface JwtPayloadBase {
   sub: string
   // 発行した時刻 (UNIXタイム形式)
   iat: number
+  // JWT ID (JWTのユニーク性を担保するため)
+  jti: string
 }
 
 export interface JwtPayload extends JwtPayloadBase {

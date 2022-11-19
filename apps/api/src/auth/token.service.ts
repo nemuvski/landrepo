@@ -10,6 +10,8 @@ import type { DeleteOneRefreshTokenArgs } from '$/nestgraphql'
 import type { UpdateOneRefreshTokenArgs } from '$/nestgraphql'
 import type { CreateOneRefreshTokenArgs } from '$/nestgraphql'
 import { JWT_REFRESH_TOKEN_EXPIRES_IN, JWT_TOKEN_EXPIRES_IN } from '$/auth/constants/jwt.constant'
+import { getSecondsFromTimeFormatString } from '$/common/helpers/ms.helper'
+import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
 import { DatabaseService } from '$/database/database.service'
 
 @Injectable()
@@ -21,14 +23,16 @@ export class TokenService {
   ) {}
 
   /**
-   * トークンの発行
+   * トークンを発行し、トークンとリフレッシュトークンの失効時刻[sec]を返却する
    *
    * @param user Userエンティティ
    * @param sid 予め生成しておいたセッションID
    */
-  getTokens(user: User, sid: string): Tokens {
-    const iat = datetime().unix()
-    const payload: JwtPayload = { sub: user.id, iat, role: user.role, sid }
+  getTokens(user: User, sid: string): [Tokens, number] {
+    const jti = generateUUIDv4()
+    const currentTimestamp = datetime().unix()
+    const payload: JwtPayload = { jti, sub: user.id, iat: currentTimestamp, role: user.role, sid }
+
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('NEST_JWT_SECRET_KEY'),
       expiresIn: JWT_TOKEN_EXPIRES_IN,
@@ -37,18 +41,25 @@ export class TokenService {
       secret: this.configService.get<string>('NEST_JWT_REFRESH_SECRET_KEY'),
       expiresIn: JWT_REFRESH_TOKEN_EXPIRES_IN,
     })
-    return {
-      accessToken,
-      refreshToken,
-    }
+
+    const refreshTokenExpirationTimeSec =
+      currentTimestamp + (getSecondsFromTimeFormatString(JWT_REFRESH_TOKEN_EXPIRES_IN) ?? 0)
+
+    return [
+      {
+        accessToken,
+        refreshToken,
+      },
+      refreshTokenExpirationTimeSec,
+    ]
   }
 
   /**
-   * RefreshTokenテーブルへレコードを追加
+   * RefreshTokenテーブルへレコードを1件追加
    *
    * @param args
    */
-  async insertRefreshToken(args: CreateOneRefreshTokenArgs) {
+  async createRefreshToken(args: CreateOneRefreshTokenArgs) {
     return this.databaseService.refreshToken.create(args)
   }
 

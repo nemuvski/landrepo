@@ -12,4 +12,4 @@ export const JWT_TOKEN_EXPIRES_IN = '5m'
  * @type {string | number}
  * @see {@link https://github.com/vercel/ms}
  */
-export const JWT_REFRESH_TOKEN_EXPIRES_IN = '5d'
+export const JWT_REFRESH_TOKEN_EXPIRES_IN = '7d'
