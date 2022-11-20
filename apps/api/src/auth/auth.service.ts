@@ -77,7 +77,8 @@ export class AuthService {
    * @param authorizationValue 'Bearer XXX.YYY.ZZZ' といった形式の内容
    */
   async reissueTokens(user: User, sessionId: string, authorizationValue?: string): Promise<SignInUserResponse> {
-    const targetRefreshToken = await this.tokenService.findRefreshToken({
+    // NOTE: expiresInカラムの内容も条件(where)に含めた方が良いが、事前にUseGuardsで弾かれるため省略している
+    const targetRefreshToken = await this.tokenService.findUniqueRefreshToken({
       where: { id_userId: { userId: user.id, id: sessionId } },
     })
     if (!authorizationValue || !targetRefreshToken) {

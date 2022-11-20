@@ -5,10 +5,12 @@ import { datetime } from '@project/datetime'
 import type { JwtPayload } from '$/auth/types/jwt-payload.type'
 import type { Tokens } from '$/auth/types/tokens.type'
 import type { User } from '$/nestgraphql'
-import type { FindUniqueRefreshTokenArgs } from '$/nestgraphql'
-import type { DeleteOneRefreshTokenArgs } from '$/nestgraphql'
-import type { UpdateOneRefreshTokenArgs } from '$/nestgraphql'
-import type { CreateOneRefreshTokenArgs } from '$/nestgraphql'
+import type {
+  FindUniqueRefreshTokenArgs,
+  DeleteOneRefreshTokenArgs,
+  UpdateOneRefreshTokenArgs,
+  CreateOneRefreshTokenArgs,
+} from '$/nestgraphql'
 import { JWT_REFRESH_TOKEN_EXPIRES_IN, JWT_TOKEN_EXPIRES_IN } from '$/auth/constants/jwt.constant'
 import { getSecondsFromTimeFormatString } from '$/common/helpers/ms.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
@@ -86,7 +88,7 @@ export class TokenService {
    *
    * @param args
    */
-  async findRefreshToken(args: FindUniqueRefreshTokenArgs) {
+  async findUniqueRefreshToken(args: FindUniqueRefreshTokenArgs) {
     return this.databaseService.refreshToken.findUnique(args)
   }
 }
