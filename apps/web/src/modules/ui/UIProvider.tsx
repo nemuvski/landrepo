@@ -6,6 +6,15 @@ import type { MantineThemeOverride } from '@mantine/core'
 
 const theme: MantineThemeOverride = {
   colorScheme: 'light',
+  globalStyles: (theme) => ({
+    html: {
+      fontSize: theme.fontSizes.md,
+    },
+    body: {
+      backgroundColor: theme.colors.gray[0],
+      fontSize: '1rem',
+    },
+  }),
 }
 
 const UIProvider: RC.WithChildren = ({ children }) => {

@@ -1,5 +1,5 @@
 import { buildPath, withTrailingSlash } from '@itsumono/utils'
-import { clientEnv } from '~/helpers/client-env'
+import { clientEnv } from '~/helpers/client-env.helper'
 
 /**
  * サイトのURLを返却する

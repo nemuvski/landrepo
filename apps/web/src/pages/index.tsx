@@ -1,27 +1,19 @@
-import { Container, Group } from '@mantine/core'
+import { Card } from '@mantine/core'
+import SignInForm from '~/components/features/SignInForm'
+import ContentFirstLayout from '~/components/layouts/ContentFirstLayout'
 import Meta from '~/components/Meta'
-import { InBoundButtonLink, InBoundLink, OutBoundButtonLink, OutBoundLink } from '~/modules/ui/Link'
-import type { NextPageWithLayout } from '~/types/next'
+import type { NextPage } from 'next'
 
-const Home: NextPageWithLayout = () => {
+const Home: NextPage = () => {
   return (
-    <>
+    <ContentFirstLayout>
       <Meta pageName='ホーム' />
 
-      <Container>
-        <Group spacing='md'>
-          <InBoundLink href='/'>テスト</InBoundLink>
-          <InBoundButtonLink href='/'>テスト</InBoundButtonLink>
-          <OutBoundLink href='https://example.com'>テスト</OutBoundLink>
-          <OutBoundButtonLink href={new URL('https://example.com')}>テスト</OutBoundButtonLink>
-        </Group>
-      </Container>
-    </>
+      <Card radius='md' shadow='sm' withBorder>
+        <SignInForm />
+      </Card>
+    </ContentFirstLayout>
   )
-}
-
-Home.getLayout = (page) => {
-  return <main>{page}</main>
 }
 
 export default Home

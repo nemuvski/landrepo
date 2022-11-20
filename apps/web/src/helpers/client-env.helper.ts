@@ -21,6 +21,12 @@ export const clientEnv = envsafe(
     NEXT_PUBLIC_BASE_URL: url({
       input: process.env.NEXT_PUBLIC_BASE_URL,
     }),
+    NEXT_PUBLIC_API_ENDPOINT: url({
+      input: process.env.NEXT_PUBLIC_API_ENDPOINT,
+    }),
+    NEXT_PUBLIC_API_GRAPHQL_ENDPOINT: url({
+      input: process.env.NEXT_PUBLIC_API_GRAPHQL_ENDPOINT,
+    }),
   },
   { strict: true }
 )
