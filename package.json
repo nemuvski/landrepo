@@ -17,6 +17,7 @@
     "build:web": "npm run build -w apps/web",
     "build:packages": "turbo run build --filter=@project/*",
     "lint": "turbo run lint",
+    "test": "turbo run test",
     "typecheck": "turbo run typecheck",
     "format": "prettier --check './**/*.{js,jsx,ts,tsx}'",
     "format:fix": "prettier --write './**/*.{js,jsx,ts,tsx}'"

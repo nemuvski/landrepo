@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import type { Tokens } from '$/auth/types/tokens.type'
+import type { Tokens } from '@project/jwt'
 import { User } from '$/nestgraphql'
 
 @ObjectType()

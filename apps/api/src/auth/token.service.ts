@@ -1,18 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
-import { datetime } from '@project/datetime'
-import type { JwtPayload } from '$/auth/types/jwt-payload.type'
-import type { Tokens } from '$/auth/types/tokens.type'
-import type { User } from '$/nestgraphql'
+import { datetime, getSeconds } from '@project/datetime'
+import { JWT_REFRESH_TOKEN_EXPIRES_IN, JWT_TOKEN_EXPIRES_IN, type JwtPayload, type Tokens } from '@project/jwt'
 import type {
+  User,
   FindUniqueRefreshTokenArgs,
   DeleteOneRefreshTokenArgs,
   UpdateOneRefreshTokenArgs,
   CreateOneRefreshTokenArgs,
 } from '$/nestgraphql'
-import { JWT_REFRESH_TOKEN_EXPIRES_IN, JWT_TOKEN_EXPIRES_IN } from '$/auth/constants/jwt.constant'
-import { getSecondsFromTimeFormatString } from '$/common/helpers/ms.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
 import { DatabaseService } from '$/database/database.service'
 
@@ -44,8 +41,7 @@ export class TokenService {
       expiresIn: JWT_REFRESH_TOKEN_EXPIRES_IN,
     })
 
-    const refreshTokenExpirationTimeSec =
-      currentTimestamp + (getSecondsFromTimeFormatString(JWT_REFRESH_TOKEN_EXPIRES_IN) ?? 0)
+    const refreshTokenExpirationTimeSec = currentTimestamp + (getSeconds(JWT_REFRESH_TOKEN_EXPIRES_IN) ?? 0)
 
     return [
       {

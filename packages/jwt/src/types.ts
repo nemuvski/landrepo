@@ -16,7 +16,7 @@ import type { UserRole } from '@project/database'
  * @see {@link https://www.rfc-editor.org/rfc/rfc7519#section-4.1}
  */
 interface JwtPayloadBase {
-  // 認証ユーザーを一意に特定するもの (UserのIDが相当する)
+  // 認証ユーザーを一意に特定するもの (UserテーブルのIDが相当する)
   sub: string
   // 発行した時刻 (UNIXタイム形式)
   iat: number
@@ -29,4 +29,9 @@ export interface JwtPayload extends JwtPayloadBase {
   sid: string
   // ユーザーのロール
   role: UserRole
+}
+
+export interface Tokens {
+  accessToken: string
+  refreshToken: string
 }

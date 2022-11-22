@@ -1,20 +1,16 @@
 {
-  "name": "@project/datetime",
+  "name": "@project/jwt",
   "version": "0.0.0",
   "private": true,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "files": [
-    "dist/**"
-  ],
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "dayjs": "^1.11.6",
-    "ms": "^2.1.3"
+    "@project/database": "*"
   },
   "devDependencies": {
     "@project/tsconfig": "*",
