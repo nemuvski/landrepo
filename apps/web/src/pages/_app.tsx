@@ -1,7 +1,7 @@
 import { DefaultSeo } from 'next-seo'
 import { clientEnv } from '~/helpers/client-env.helper'
 import { getSiteUrlWithPath } from '~/helpers/urls.helper'
-import GraphQLProvider from '~/modules/graphql/GraphQLProvider'
+import GraphQLProvider from '~/modules/graphql'
 import UIProvider from '~/modules/ui/UIProvider'
 import type { AppProps } from 'next/app'
 
