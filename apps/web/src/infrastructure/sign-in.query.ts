@@ -1,6 +1,6 @@
 import { gql } from 'urql'
+import type { Tokens } from '@project/jwt'
 import type { UserEntity } from '~/entities/user.entity'
-import type { Tokens } from '~/types/token'
 
 export type SignInMutationOutput = Tokens & { user: UserEntity }
 
