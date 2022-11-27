@@ -8,26 +8,11 @@ import { COOKIE_NAME_ACCESS_TOKEN, COOKIE_NAME_REFRESH_TOKEN } from '~/modules/a
 import { defaultCookieOptions } from '~/modules/cookie'
 import { graphqlClient } from '~/modules/graphql'
 import { axiosNextApiRoute } from '~/modules/http-client'
+import type { Tokens } from '@project/jwt'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import type { UserEntity } from '~/entities/user.entity'
 import type { ApiRouteErrorResponse } from '~/exceptions/api-route.error'
 import type { Session } from '~/modules/auth'
-import type { SignInMutationOutput } from '~/modules/auth/routes/sign-in'
-
-const mutation = gql`
-  mutation {
-    reissueTokens {
-      user {
-        id
-        email
-        role
-      }
-      accessToken
-      refreshToken
-      accessTokenExpiresIn
-      refreshTokenExpiresIn
-    }
-  }
-`
 
 /**
  * トークン再発行のハンドラを提供する
@@ -80,6 +65,11 @@ export function useReissueTokenHandler(): [
  */
 export async function reissueApiRoute(req: NextApiRequest, res: NextApiResponse) {
   try {
+    if (req.method !== 'POST') {
+      res.setHeader('Allow', 'POST')
+      throw new ApiRouteError(405)
+    }
+
     // リフレッシュトークンがあれば良い
     const cookies = parseCookies({ req })
     const refreshToken = cookies[COOKIE_NAME_REFRESH_TOKEN]
@@ -87,42 +77,54 @@ export async function reissueApiRoute(req: NextApiRequest, res: NextApiResponse)
       throw new ApiRouteError(403)
     }
 
-    if (req.method !== 'POST') {
-      res.setHeader('Allow', 'POST')
-      throw new ApiRouteError(405)
-    }
-
     const { data, error } = await graphqlClient({ token: refreshToken })
-      .mutation<SignInMutationOutput>(mutation, {})
+      .mutation<{ reissueTokens: Tokens & { user: UserEntity } }>(
+        gql`
+          mutation {
+            reissueTokens {
+              user {
+                id
+                email
+                role
+              }
+              accessToken
+              refreshToken
+              accessTokenExpiresIn
+              refreshTokenExpiresIn
+            }
+          }
+        `,
+        {}
+      )
       .toPromise()
     if (error || !data) {
       throw new ApiRouteError(401)
     } else {
       // クッキーに設定
-      setCookie({ res }, COOKIE_NAME_ACCESS_TOKEN, data.accessToken, {
+      setCookie({ res }, COOKIE_NAME_ACCESS_TOKEN, data.reissueTokens.accessToken, {
         ...defaultCookieOptions,
-        expires: datetime(data.accessTokenExpiresIn).toDate(),
+        expires: datetime(data.reissueTokens.accessTokenExpiresIn).toDate(),
       })
-      setCookie({ res }, COOKIE_NAME_REFRESH_TOKEN, data.refreshToken, {
+      setCookie({ res }, COOKIE_NAME_REFRESH_TOKEN, data.reissueTokens.refreshToken, {
         ...defaultCookieOptions,
-        expires: datetime(data.refreshTokenExpiresIn).toDate(),
+        expires: datetime(data.reissueTokens.refreshTokenExpiresIn).toDate(),
       })
     }
 
     const responseBody: Session = {
-      accessToken: data.accessToken,
-      accessTokenExpiresIn: data.accessTokenExpiresIn,
-      user: data.user,
+      accessToken: data.reissueTokens.accessToken,
+      accessTokenExpiresIn: data.reissueTokens.accessTokenExpiresIn,
+      user: data.reissueTokens.user,
     }
 
-    res.status(200).send(responseBody)
+    res.status(200).json(responseBody)
   } catch (error) {
     console.error(error)
     if (isApiRouteError(error)) {
-      res.status(error.statusCode).send(error.formatResponseBody())
+      res.status(error.statusCode).json(error.formatResponseBody())
     } else {
       const newError = new ApiRouteError(500)
-      res.status(500).send(newError.formatResponseBody())
+      res.status(500).json(newError.formatResponseBody())
     }
   }
 }

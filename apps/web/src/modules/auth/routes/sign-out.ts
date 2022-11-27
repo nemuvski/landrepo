@@ -9,12 +9,6 @@ import { axiosNextApiRoute } from '~/modules/http-client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { ApiRouteErrorResponse } from '~/exceptions/api-route.error'
 
-const mutation = gql`
-  mutation {
-    signOut
-  }
-`
-
 /**
  * サインアウトのハンドラを提供する
  */
@@ -62,6 +56,11 @@ export function useSignOutHandler(): [() => Promise<void>, { loading: boolean; e
  */
 export async function signOutApiRoute(req: NextApiRequest, res: NextApiResponse) {
   try {
+    if (req.method !== 'POST') {
+      res.setHeader('Allow', 'POST')
+      throw new ApiRouteError(405)
+    }
+
     // リフレッシュトークンがあれば良い
     const cookies = parseCookies({ req })
     const refreshToken = cookies[COOKIE_NAME_REFRESH_TOKEN]
@@ -69,12 +68,16 @@ export async function signOutApiRoute(req: NextApiRequest, res: NextApiResponse)
       throw new ApiRouteError(403)
     }
 
-    if (req.method !== 'POST') {
-      res.setHeader('Allow', 'POST')
-      throw new ApiRouteError(405)
-    }
-
-    const { error } = await graphqlClient({ token: refreshToken }).mutation<{}, {}>(mutation, {}).toPromise()
+    const { error } = await graphqlClient({ token: refreshToken })
+      .mutation<{}, {}>(
+        gql`
+          mutation {
+            signOut
+          }
+        `,
+        {}
+      )
+      .toPromise()
     if (error) {
       throw new ApiRouteError(401)
     }
@@ -83,14 +86,14 @@ export async function signOutApiRoute(req: NextApiRequest, res: NextApiResponse)
     destroyCookie({ res }, COOKIE_NAME_ACCESS_TOKEN)
     destroyCookie({ res }, COOKIE_NAME_REFRESH_TOKEN)
 
-    res.status(204).send({})
+    res.status(204).json({})
   } catch (error) {
     console.error(error)
     if (isApiRouteError(error)) {
-      res.status(error.statusCode).send(error.formatResponseBody())
+      res.status(error.statusCode).json(error.formatResponseBody())
     } else {
       const newError = new ApiRouteError(500)
-      res.status(500).send(newError.formatResponseBody())
+      res.status(500).json(newError.formatResponseBody())
     }
   }
 }

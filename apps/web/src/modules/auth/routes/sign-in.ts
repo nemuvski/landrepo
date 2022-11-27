@@ -15,25 +15,7 @@ import type { UserEntity } from '~/entities/user.entity'
 import type { ApiRouteErrorResponse } from '~/exceptions/api-route.error'
 import type { Session } from '~/modules/auth'
 
-export type SignInMutationOutput = Tokens & { user: UserEntity }
-
 export type SignInMutationInput = { email: string; password: string }
-
-const mutation = gql`
-  mutation ($email: String!, $password: String!) {
-    signIn(input: { email: $email, password: $password }) {
-      user {
-        id
-        email
-        role
-      }
-      accessToken
-      refreshToken
-      accessTokenExpiresIn
-      refreshTokenExpiresIn
-    }
-  }
-`
 
 /**
  * サインインのハンドラを提供する
@@ -86,15 +68,15 @@ export function useSignInHandler(): [
  */
 export async function signInApiRoute(req: NextApiRequest, res: NextApiResponse) {
   try {
+    if (req.method !== 'POST') {
+      res.setHeader('Allow', 'POST')
+      throw new ApiRouteError(405)
+    }
+
     // 既にアクセストークン類のクッキーが設定されている場合は処理しない
     const cookies = parseCookies({ req })
     if (cookies[COOKIE_NAME_ACCESS_TOKEN] || cookies[COOKIE_NAME_REFRESH_TOKEN]) {
       throw new ApiRouteError(403)
-    }
-
-    if (req.method !== 'POST') {
-      res.setHeader('Allow', 'POST')
-      throw new ApiRouteError(405)
     }
 
     const { email, password } = req.body as Partial<SignInMutationInput>
@@ -103,40 +85,57 @@ export async function signInApiRoute(req: NextApiRequest, res: NextApiResponse) 
     }
 
     const { data, error } = await graphqlClient()
-      .mutation<SignInMutationOutput, SignInMutationInput>(mutation, {
-        email,
-        password,
-      })
+      .mutation<{ signIn: Tokens & { user: UserEntity } }, SignInMutationInput>(
+        gql`
+          mutation ($email: String!, $password: String!) {
+            signIn(input: { email: $email, password: $password }) {
+              user {
+                id
+                email
+                role
+              }
+              accessToken
+              refreshToken
+              accessTokenExpiresIn
+              refreshTokenExpiresIn
+            }
+          }
+        `,
+        {
+          email,
+          password,
+        }
+      )
       .toPromise()
     if (error || !data) {
       throw new ApiRouteError(401)
     } else {
       // クッキーに設定
-      setCookie({ res }, COOKIE_NAME_ACCESS_TOKEN, data.accessToken, {
+      setCookie({ res }, COOKIE_NAME_ACCESS_TOKEN, data.signIn.accessToken, {
         ...defaultCookieOptions,
-        expires: datetime(data.accessTokenExpiresIn).toDate(),
+        expires: datetime(data.signIn.accessTokenExpiresIn).toDate(),
       })
-      setCookie({ res }, COOKIE_NAME_REFRESH_TOKEN, data.refreshToken, {
+      setCookie({ res }, COOKIE_NAME_REFRESH_TOKEN, data.signIn.refreshToken, {
         ...defaultCookieOptions,
-        expires: datetime(data.refreshTokenExpiresIn).toDate(),
+        expires: datetime(data.signIn.refreshTokenExpiresIn).toDate(),
       })
     }
 
     // クライアントサイドで扱うのはアクセストークンのみ (リフレッシュトークンはクッキーでのみ保持)
     const responseBody: Session = {
-      accessToken: data.accessToken,
-      accessTokenExpiresIn: data.accessTokenExpiresIn,
-      user: data.user,
+      accessToken: data.signIn.accessToken,
+      accessTokenExpiresIn: data.signIn.accessTokenExpiresIn,
+      user: data.signIn.user,
     }
 
-    res.status(200).send(responseBody)
+    res.status(200).json(responseBody)
   } catch (error) {
     console.error(error)
     if (isApiRouteError(error)) {
-      res.status(error.statusCode).send(error.formatResponseBody())
+      res.status(error.statusCode).json(error.formatResponseBody())
     } else {
       const newError = new ApiRouteError(500)
-      res.status(500).send(newError.formatResponseBody())
+      res.status(500).json(newError.formatResponseBody())
     }
   }
 }
