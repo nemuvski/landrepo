@@ -59,14 +59,14 @@ export function useSignInHandler(): [
     setLoading(true)
     setError(null)
     try {
-      const response = await axiosNextApiRoute.post<SignInMutationInput, Session>(
+      const response = await axiosNextApiRoute.post<Session, AxiosResponse<Session>, SignInMutationInput>(
         '/auth/sign-in',
         {
           ...input,
         },
         { signal: abortController.current?.signal }
       )
-      updater(response)
+      updater(response.data)
     } catch (error) {
       if (isApiRouteError(error)) {
         setError(error)
@@ -128,14 +128,14 @@ export async function signInApiRoute(req: NextApiRequest, res: NextApiResponse) 
       user: data.user,
     }
 
-    res.status(200).json(responseBody)
+    res.status(200).send(responseBody)
   } catch (error) {
     console.error(error)
     if (isApiRouteError(error)) {
-      res.status(error.statusCode).json(error.formatResponseBody())
+      res.status(error.statusCode).send(error.formatResponseBody())
     } else {
       const newError = new ApiRouteError(500)
-      res.status(500).json(newError.formatResponseBody())
+      res.status(500).send(newError.formatResponseBody())
     }
   }
 }

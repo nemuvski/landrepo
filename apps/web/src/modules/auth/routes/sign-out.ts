@@ -83,14 +83,14 @@ export async function signOutApiRoute(req: NextApiRequest, res: NextApiResponse)
     destroyCookie({ res }, COOKIE_NAME_ACCESS_TOKEN)
     destroyCookie({ res }, COOKIE_NAME_REFRESH_TOKEN)
 
-    res.status(204).json({})
+    res.status(204).send({})
   } catch (error) {
     console.error(error)
     if (isApiRouteError(error)) {
-      res.status(error.statusCode).json(error.formatResponseBody())
+      res.status(error.statusCode).send(error.formatResponseBody())
     } else {
       const newError = new ApiRouteError(500)
-      res.status(500).json(newError.formatResponseBody())
+      res.status(500).send(newError.formatResponseBody())
     }
   }
 }
