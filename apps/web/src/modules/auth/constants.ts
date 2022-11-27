@@ -3,14 +3,14 @@
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#attributes}
  */
-export const COOKIE_NAME_ACCESS_TOKEN = '__Host-acc-tkn' as const
+export const COOKIE_NAME_ACCESS_TOKEN = '__app-acc-tkn' as const
 
 /**
  * リフレッシュトークンを格納しておくクッキー名
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#attributes}
  */
-export const COOKIE_NAME_REFRESH_TOKEN = '__Host-ref-tkn' as const
+export const COOKIE_NAME_REFRESH_TOKEN = '__app-ref-tkn' as const
 
 /**
  * トークン失効をチェックする間隔[ms]
