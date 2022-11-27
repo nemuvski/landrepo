@@ -34,4 +34,10 @@ export interface JwtPayload extends JwtPayloadBase {
 export interface Tokens {
   accessToken: string
   refreshToken: string
+
+  // ISO date string
+  accessTokenExpiresIn: string
+
+  // ISO date string
+  refreshTokenExpiresIn: string
 }

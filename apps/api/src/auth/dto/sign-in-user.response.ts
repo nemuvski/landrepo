@@ -10,6 +10,12 @@ export class SignInUserResponse implements Tokens {
   @Field(() => String)
   refreshToken: string
 
+  @Field(() => String)
+  accessTokenExpiresIn: string
+
+  @Field(() => String)
+  refreshTokenExpiresIn: string
+
   @Field(() => User)
   user: User
 }

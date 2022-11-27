@@ -1,5 +1,4 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
-import { datetime } from '@project/datetime'
 import type { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
 import type { User } from '$/nestgraphql'
 import { TokenService } from '$/auth/token.service'
@@ -41,14 +40,14 @@ export class AuthService {
    */
   async signIn(user: User): Promise<SignInUserResponse> {
     const sessionId = generateUUIDv4()
-    const [tokens, expirationTimeSec] = this.tokenService.getTokens(user, sessionId)
+    const tokens = this.tokenService.getTokens(user, sessionId)
     const hashedToken = hashValueWithSHA512(tokens.refreshToken)
     await this.tokenService.createRefreshToken({
       data: {
         id: sessionId,
         User: { connect: { id: user.id } },
         token: hashedToken,
-        expiresIn: datetime.unix(expirationTimeSec).toISOString(),
+        expiresIn: tokens.refreshTokenExpiresIn,
       },
     })
     return {
@@ -91,10 +90,10 @@ export class AuthService {
       throw new UnauthorizedException()
     }
 
-    const [newTokens, expirationTimeSec] = this.tokenService.getTokens(user, sessionId)
+    const newTokens = this.tokenService.getTokens(user, sessionId)
     const hashedToken = hashValueWithSHA512(newTokens.refreshToken)
     await this.tokenService.updateRefreshToken({
-      data: { token: { set: hashedToken }, expiresIn: { set: datetime.unix(expirationTimeSec).toISOString() } },
+      data: { token: { set: hashedToken }, expiresIn: { set: newTokens.refreshTokenExpiresIn } },
       where: { id_userId: { userId: user.id, id: sessionId } },
     })
 

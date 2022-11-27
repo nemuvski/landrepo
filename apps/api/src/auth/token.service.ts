@@ -27,10 +27,10 @@ export class TokenService {
    * @param user Userエンティティ
    * @param sid 予め生成しておいたセッションID
    */
-  getTokens(user: User, sid: string): [Tokens, number] {
+  getTokens(user: User, sid: string): Tokens {
     const jti = generateUUIDv4()
-    const currentTimestamp = datetime().unix()
-    const payload: JwtPayload = { jti, sub: user.id, iat: currentTimestamp, role: user.role, sid }
+    const currentTimestamp = datetime()
+    const payload: JwtPayload = { jti, sub: user.id, iat: currentTimestamp.unix(), role: user.role, sid }
 
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('NEST_JWT_SECRET_KEY'),
@@ -41,15 +41,16 @@ export class TokenService {
       expiresIn: JWT_REFRESH_TOKEN_EXPIRES_IN,
     })
 
-    const refreshTokenExpirationTimeSec = currentTimestamp + (getSeconds(JWT_REFRESH_TOKEN_EXPIRES_IN) ?? 0)
-
-    return [
-      {
-        accessToken,
-        refreshToken,
-      },
-      refreshTokenExpirationTimeSec,
-    ]
+    return {
+      accessToken,
+      refreshToken,
+      accessTokenExpiresIn: datetime
+        .unix(currentTimestamp.unix() + (getSeconds(JWT_TOKEN_EXPIRES_IN) ?? 0))
+        .toISOString(),
+      refreshTokenExpiresIn: datetime
+        .unix(currentTimestamp.unix() + (getSeconds(JWT_REFRESH_TOKEN_EXPIRES_IN) ?? 0))
+        .toISOString(),
+    }
   }
 
   /**

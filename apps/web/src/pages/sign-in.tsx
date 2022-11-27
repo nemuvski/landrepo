@@ -1,19 +1,19 @@
 import { Card } from '@mantine/core'
+import SignInForm from '~/components/features/SignInForm'
 import ContentFirstLayout from '~/components/layouts/ContentFirstLayout'
 import Meta from '~/components/Meta'
-import { InBoundButtonLink } from '~/modules/ui/Link'
 import type { NextPage } from 'next'
 
-const Home: NextPage = () => {
+const SignInPage: NextPage = () => {
   return (
     <ContentFirstLayout>
-      <Meta pageName='ホーム' />
+      <Meta pageName='サインイン' />
 
       <Card radius='md' shadow='sm' withBorder>
-        <InBoundButtonLink href='/sign-in'>サインイン</InBoundButtonLink>
+        <SignInForm />
       </Card>
     </ContentFirstLayout>
   )
 }
 
-export default Home
+export default SignInPage

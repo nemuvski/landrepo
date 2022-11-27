@@ -105,7 +105,9 @@ input SignInUserInput {
 
 type SignInUserResponse {
   accessToken: String!
+  accessTokenExpiresIn: String!
   refreshToken: String!
+  refreshTokenExpiresIn: String!
   user: User!
 }
 

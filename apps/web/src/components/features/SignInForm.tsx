@@ -1,11 +1,10 @@
 import { regexpValidEmailAddressFormat } from '@itsumono/utils'
 import { Button, Box, Stack, TextInput, PasswordInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { useMutation } from 'urql'
+import { useEffect } from 'react'
 import { Form } from '~/components/Form'
-import { signInMutation } from '~/infrastructure/sign-in.query'
+import { useSignInHandler } from '~/modules/auth/routes/sign-in'
 import type { RC } from '@itsumono/react'
-import type { SignInMutationInput, SignInMutationOutput } from '~/infrastructure/sign-in.query'
 
 type FormFieldValues = {
   email: string
@@ -13,6 +12,8 @@ type FormFieldValues = {
 }
 
 const SignInForm: RC.WithoutChildren = () => {
+  const [signIn, { error, loading }] = useSignInHandler()
+
   const form = useForm<FormFieldValues>({
     initialValues: { email: '', password: '' },
     validate: {
@@ -21,15 +22,16 @@ const SignInForm: RC.WithoutChildren = () => {
     },
   })
 
-  const [{ fetching }, signIn] = useMutation<SignInMutationOutput, SignInMutationInput>(signInMutation)
+  useEffect(() => {
+    if (error) {
+      console.error(error)
+    }
+  }, [error])
 
   return (
     <Form
-      onSubmit={form.onSubmit(async (values) => {
-        const { error } = await signIn({ email: values.email, password: values.password })
-        console.log(error)
-        // TODO: エラーメッセージの改善
-        // TODO: 認証情報を管理すること
+      onSubmit={form.onSubmit((values) => {
+        signIn({ email: values.email, password: values.password })
       })}
     >
       <Stack spacing='lg'>
@@ -49,7 +51,7 @@ const SignInForm: RC.WithoutChildren = () => {
         />
 
         <Box sx={{ textAlign: 'center' }}>
-          <Button type='submit' loading={fetching}>
+          <Button type='submit' loading={loading}>
             ログイン
           </Button>
         </Box>
