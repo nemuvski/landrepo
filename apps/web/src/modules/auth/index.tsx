@@ -54,8 +54,8 @@ const ValidTokenObserver = () => {
   useEffect(
     () => {
       if (session) {
+        console.debug('[Session]', session)
         const timer = setInterval(() => {
-          // 失効前に (margin設定)
           if (datetime(session.accessTokenExpiresIn).diff(datetime(), 'ms') <= EXPIRY_MARGIN) {
             reissueToken()
           }
