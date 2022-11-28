@@ -3,6 +3,7 @@ import { ApolloDriver } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
+import { AppLoggerModule } from './logger/app-logger.module'
 import type { ApolloDriverConfig } from '@nestjs/apollo'
 import { AppController } from '$/app.controller'
 import { AuthModule } from '$/auth/auth.module'
@@ -24,6 +25,7 @@ import { UsersService } from '$/users/users.service'
       validationSchema: validationEnvSchema,
       validationOptions: validationEnvOptions,
     }),
+    AppLoggerModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       playground: isDevelopmentEnv(),

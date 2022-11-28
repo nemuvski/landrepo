@@ -1,9 +1,15 @@
 import { ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from '$/app.module'
+import { isDevelopmentEnv } from '$/common/helpers/env.helper'
+import { AppLoggerService } from '$/logger/app-logger.service'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule, {
+    logger: isDevelopmentEnv() ? ['log', 'error', 'warn', 'debug', 'verbose'] : false,
+  })
+
+  app.useLogger(app.get(AppLoggerService))
 
   app.useGlobalPipes(
     new ValidationPipe({
