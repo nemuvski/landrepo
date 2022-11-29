@@ -27,6 +27,7 @@ import { UsersService } from '$/users/users.service'
     }),
     AppLoggerModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
+      path: '/gql',
       driver: ApolloDriver,
       playground: isDevelopmentEnv(),
       debug: isDevelopmentEnv(),
