@@ -14,9 +14,9 @@ export function graphqlClient(
     {
       url: clientEnv.NEXT_PUBLIC_API_GRAPHQL_ENDPOINT,
       fetchOptions: () => {
-        const headers: RequestInit['headers'] = []
+        const headers: RequestInit['headers'] = {}
         if (token) {
-          headers.push(['Authorization', `Bearer ${token}`])
+          headers['Authorization'] = `Bearer ${token}`
         }
         return { headers }
       },

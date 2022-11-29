@@ -4,6 +4,7 @@ import { gql } from 'urql'
 import ApiRouteError, { isApiRouteError } from '~/exceptions/api-route.error'
 import { useSessionUpdater } from '~/modules/auth'
 import { COOKIE_NAME_ACCESS_TOKEN, COOKIE_NAME_REFRESH_TOKEN } from '~/modules/auth/constants'
+import { defaultCookieOptions } from '~/modules/cookie'
 import { graphqlClient } from '~/modules/graphql'
 import { axiosNextApiRoute } from '~/modules/http-client'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -84,8 +85,9 @@ export async function signOutApiRoute(req: NextApiRequest, res: NextApiResponse)
     }
 
     // アクセストークン関連のクッキーを破棄
-    destroyCookie({ res }, COOKIE_NAME_ACCESS_TOKEN)
-    destroyCookie({ res }, COOKIE_NAME_REFRESH_TOKEN)
+    // NOTE: 削除する際はオプションにpathを設定しておくこと
+    destroyCookie({ res }, COOKIE_NAME_ACCESS_TOKEN, defaultCookieOptions)
+    destroyCookie({ res }, COOKIE_NAME_REFRESH_TOKEN, defaultCookieOptions)
 
     res.status(204).json({})
   } catch (error) {
