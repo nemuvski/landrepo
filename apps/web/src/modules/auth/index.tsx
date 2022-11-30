@@ -4,7 +4,14 @@ import { useEffect } from 'react'
 import { CHECK_VALID_TOKEN_INTERVAL, EXPIRY_MARGIN } from '~/modules/auth/constants'
 import { useReissueTokenHandler } from '~/modules/auth/routes/reissue'
 import { JotaiDebugTool, JotaiProvider } from '~/modules/jotai'
+import type { RC } from '@itsumono/react'
+import type { AppProps } from 'next/app'
 import type { UserEntity } from '~/entities/user.entity'
+
+/**
+ * @see {withSession()} 返値に含まれる_sessionが入る
+ */
+export type AppPropsWithSession = AppProps<{ session: Session | null | undefined }>
 
 export interface Session {
   accessToken: string
@@ -31,9 +38,12 @@ export function useSessionUpdater() {
 /**
  * 認証関連の処理のプロバイダー
  */
-export const AuthSessionProvider: typeof JotaiProvider = ({ children, initialValues }) => {
+export const AuthSessionProvider: RC.WithChildren<{ initialSession?: Session | null }> = ({
+  initialSession,
+  children,
+}) => {
   return (
-    <JotaiProvider initialValues={initialValues} scope={sessionAtomScope}>
+    <JotaiProvider initialValues={[[sessionAtom, initialSession ?? null] as const]} scope={sessionAtomScope}>
       <JotaiDebugTool scope={sessionAtomScope} />
       <ValidTokenObserver />
       {children}

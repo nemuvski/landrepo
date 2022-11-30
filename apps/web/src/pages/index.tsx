@@ -2,7 +2,7 @@ import { Card } from '@mantine/core'
 import ContentFirstLayout from '~/components/layouts/ContentFirstLayout'
 import Meta from '~/components/Meta'
 import { InBoundButtonLink } from '~/modules/ui/Link'
-import type { NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 
 const Home: NextPage = () => {
   return (
@@ -14,6 +14,10 @@ const Home: NextPage = () => {
       </Card>
     </ContentFirstLayout>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return { props: { session: { hoge: 'string' } } }
 }
 
 export default Home
