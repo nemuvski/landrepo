@@ -26,8 +26,8 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
      * NOTE: 返値はContextに含まれる
      */
     return {
-      ...user,
-      sid: payload.sid,
+      ...payload,
+      user,
     }
   }
 }

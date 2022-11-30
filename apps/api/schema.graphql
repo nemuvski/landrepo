@@ -12,6 +12,7 @@ type Mutation {
   reissueTokens: SignInUserResponse!
   signIn(input: SignInUserInput!): SignInUserResponse!
   signOut: Boolean!
+  verifySession: VerifySessionResponse!
 }
 
 type Query {
@@ -160,4 +161,9 @@ enum UserRole {
 input UserWhereUniqueInput {
   email: String
   id: String
+}
+
+type VerifySessionResponse {
+  accessTokenExpiresIn: String!
+  user: User!
 }

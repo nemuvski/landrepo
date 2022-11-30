@@ -11,4 +11,4 @@ export type LocalStrategyValidateReturnType = User
  *
  * NOTE: エンティティと分かるように便宜的に末尾にEntityとつけている
  */
-export type JwtStrategyValidationReturnType = User & Pick<JwtPayload, 'sid'>
+export type JwtStrategyValidationReturnType = JwtPayload & { user: User }

@@ -1,5 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { datetime } from '@project/datetime'
 import type { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
+import type { VerifySessionResponse } from '$/auth/dto/verify-session.response'
 import type { User } from '$/nestgraphql'
 import { TokenService } from '$/auth/token.service'
 import {
@@ -66,6 +68,19 @@ export class AuthService {
     await this.tokenService.removeRefreshToken({ where: { id_userId: { userId, id: sessionId } } })
     // エラーなく削除できた場合はtrueを返却する
     return true
+  }
+
+  /**
+   * アクセストークンの検証して、問題ない際に返却する
+   *
+   * @param user
+   * @param expiresInUnix 失効する時刻 (UNIXタイム)
+   */
+  async verifySession(user: User, expiresInUnix: number): Promise<VerifySessionResponse> {
+    return {
+      accessTokenExpiresIn: datetime.unix(expiresInUnix).toISOString(),
+      user,
+    }
   }
 
   /**

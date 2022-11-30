@@ -18,6 +18,8 @@ import type { UserRole } from '@project/database'
 interface JwtPayloadBase {
   // 認証ユーザーを一意に特定するもの (UserテーブルのIDが相当する)
   sub: string
+  // 失効する時刻 (UNIXタイム形式) ※JWT発行時にで自動付与される
+  exp: number
   // 発行した時刻 (UNIXタイム形式)
   iat: number
   // JWT ID (JWTのユニーク性を担保するため)

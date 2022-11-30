@@ -30,7 +30,8 @@ export class TokenService {
   getTokens(user: User, sid: string): Tokens {
     const jti = generateUUIDv4()
     const currentTimestamp = datetime()
-    const payload: JwtPayload = { jti, sub: user.id, iat: currentTimestamp.unix(), role: user.role, sid }
+    // NOTE: expはsign()で付与される
+    const payload: Omit<JwtPayload, 'exp'> = { jti, sub: user.id, iat: currentTimestamp.unix(), role: user.role, sid }
 
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('NEST_JWT_SECRET_KEY'),

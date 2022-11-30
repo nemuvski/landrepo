@@ -26,8 +26,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') implements IP
      * NOTE: 返値はContextに含まれる
      */
     return {
-      ...user,
-      sid: payload.sid,
+      ...payload,
+      user,
     }
   }
 }
