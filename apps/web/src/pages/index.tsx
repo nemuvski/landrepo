@@ -17,13 +17,10 @@ const Home: NextPage = () => {
   )
 }
 
-export const getServerSideProps = withSession<{ hoge: number }>({
+export const getServerSideProps = withSession({
   routeGuard: {
     acceptRoles: { GENERAL: true, ADMIN: true },
     fallback: { redirect: { destination: '/sign-in', permanent: false } },
-  },
-  getServerSideProps: async (context, session) => {
-    return { props: { hoge: 0 } }
   },
 })
 
