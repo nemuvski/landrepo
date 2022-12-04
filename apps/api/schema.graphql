@@ -53,6 +53,7 @@ type User {
   email: String!
   id: ID!
   role: UserRole!
+  status: UserStatus!
 }
 
 type UserCount {
@@ -64,23 +65,33 @@ type UserCountAggregate {
   email: Int!
   id: Int!
   role: Int!
+  status: Int!
 }
 
 type UserMaxAggregate {
   email: String
   id: String
   role: UserRole
+  status: UserStatus
 }
 
 type UserMinAggregate {
   email: String
   id: String
   role: UserRole
+  status: UserStatus
 }
 
 enum UserRole {
   ADMIN
   GENERAL
+}
+
+enum UserStatus {
+  ACTIVE
+  BANNED
+  INACTIVE
+  NOT_CONFIRMED
 }
 
 input UserWhereUniqueInput {

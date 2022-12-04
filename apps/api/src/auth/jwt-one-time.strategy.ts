@@ -30,6 +30,25 @@ export class JwtOneTimeStrategy
     }
 
     /**
+     * SignUp用途の場合
+     */
+    if (payload.use === JwtOneTimePayloadUseField.SignUp) {
+      // statusが確認されていない状態の場合のみ処理する
+      if (!this.usersService.isNotConfirmedUser(user) || !user.signUpConfirmationToken) {
+        throw new UnauthorizedException('既に確認済みか、無効なユーザーです')
+      }
+    }
+
+    /**
+     * ChangeEmail用途の場合
+     */
+    if (payload.use === JwtOneTimePayloadUseField.ChangeEmail) {
+      if (!this.usersService.isActiveUser(user)) {
+        throw new UnauthorizedException('無効なユーザーです')
+      }
+    }
+
+    /**
      * NOTE: 返値はContextに含まれる
      */
     return {

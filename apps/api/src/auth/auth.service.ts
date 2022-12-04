@@ -1,10 +1,9 @@
 import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtOneTimePayloadUseField } from '@project/auth'
-import { UserRole } from '@project/database'
+import { UserRole, UserStatus, type User } from '@project/database'
 import { datetime } from '@project/datetime'
 import type { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
 import type { VerifySessionResponse } from '$/auth/dto/verify-session.response'
-import type { User } from '$/nestgraphql'
 import { TokenService } from '$/auth/token.service'
 import { compareHashedValueWithBcrypt, compareHashedValueWithSHA256 } from '$/common/helpers/hash.helper'
 import { getTokenByAuthorizationHeader } from '$/common/helpers/http-header.helper'
@@ -65,7 +64,9 @@ export class AuthService {
         where: { id: user.id },
       })
     } else {
-      const newUser = await this.usersService.create({ data: { email, password, role } })
+      const newUser = await this.usersService.create({
+        data: { email, password, role, status: UserStatus.NOT_CONFIRMED },
+      })
       oneTimeToken = this.tokenService.getOneTimeToken(newUser, JwtOneTimePayloadUseField.SignUp)
       await this.usersService.update({
         data: {

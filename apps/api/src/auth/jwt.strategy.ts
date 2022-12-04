@@ -27,6 +27,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') implements IP
     if (!user) {
       throw new UnauthorizedException('対象のユーザーが存在しません')
     }
+    if (!this.usersService.isActiveUser(user)) {
+      throw new UnauthorizedException('有効なユーザーではありません')
+    }
     const session = await this.tokenService.findUniqueRefreshToken({
       where: { id_userId: { id: payload.sid, userId: payload.sub } },
     })

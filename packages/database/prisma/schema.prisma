@@ -35,6 +35,13 @@ enum UserRole {
   ADMIN
 }
 
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BANNED
+  NOT_CONFIRMED
+}
+
 model User {
   /// @Field(() => ID)
   id                       String         @id @default(uuid()) @db.Uuid
@@ -44,6 +51,8 @@ model User {
   email                    String         @unique
   /// @HideField()
   password                 String
+  /// @HideField({ output: false, input: true })
+  status                   UserStatus     @default(NOT_CONFIRMED)
   /// @HideField({ output: true, input: true })
   createdAt                DateTime       @default(now())
   /// @HideField({ output: true, input: true })

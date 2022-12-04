@@ -1,12 +1,32 @@
 import { Injectable } from '@nestjs/common'
+import { UserStatus } from '@project/database'
 import type { CreateOneUserArgs, FindUniqueUserArgs } from '$/nestgraphql'
 import type { UpdateOneUserArgs } from '$/nestgraphql'
+import type { User } from '@project/database'
 import { hashValueWithBcrypt } from '$/common/helpers/hash.helper'
 import { DatabaseService } from '$/database/database.service'
 
 @Injectable()
 export class UsersService {
   constructor(private databaseService: DatabaseService) {}
+
+  /**
+   * メールが未確認状態のユーザーである場合はTrueを返却
+   *
+   * @param user
+   */
+  isNotConfirmedUser(user: User) {
+    return user.status === UserStatus.NOT_CONFIRMED
+  }
+
+  /**
+   * ログイン可能なユーザーである場合はTrueを返却
+   *
+   * @param user
+   */
+  isActiveUser(user: User) {
+    return user.status === UserStatus.ACTIVE
+  }
 
   /**
    * Userテーブルからレコードを一意に1件取得
