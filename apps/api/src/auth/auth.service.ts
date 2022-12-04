@@ -65,13 +65,7 @@ export class AuthService {
         where: { id: user.id },
       })
     } else {
-      const newUser = await this.usersService.create({
-        data: {
-          email,
-          password,
-          role,
-        },
-      })
+      const newUser = await this.usersService.create({ data: { email, password, role } })
       oneTimeToken = this.tokenService.getOneTimeToken(newUser, JwtOneTimePayloadUseField.SignUp)
       await this.usersService.update({
         data: {
