@@ -15,7 +15,7 @@ import type { UserRole } from '@project/database'
  *
  * @see {@link https://www.rfc-editor.org/rfc/rfc7519#section-4.1}
  */
-interface JwtPayloadBase {
+export interface JwtPayloadBase {
   // 認証ユーザーを一意に特定するもの (UserテーブルのIDが相当する)
   sub: string
   // 失効する時刻 (UNIXタイム形式) ※JWT発行時にで自動付与される
@@ -32,6 +32,19 @@ export interface JwtPayload extends JwtPayloadBase {
   // ユーザーのロール
   role: UserRole
 }
+
+export interface JwtOneTimePayload extends JwtPayloadBase {
+  // トークンの用途
+  use: JwtOneTimePayloadUseFieldType
+  // メールアドレス (新規登録で確認メール等で利用する)
+  email: string
+}
+
+export const JwtOneTimePayloadUseField = {
+  SignUp: 'sign-up',
+  ChangeEmail: 'change-email',
+} as const
+export type JwtOneTimePayloadUseFieldType = typeof JwtOneTimePayloadUseField[keyof typeof JwtOneTimePayloadUseField]
 
 export interface Tokens {
   accessToken: string

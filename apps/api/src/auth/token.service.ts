@@ -2,7 +2,13 @@ import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { datetime, getSeconds } from '@project/datetime'
-import { JWT_REFRESH_TOKEN_EXPIRES_IN, JWT_TOKEN_EXPIRES_IN, type JwtPayload, type Tokens } from '@project/jwt'
+import {
+  JWT_ONE_TIME_TOKEN_EXPIRES_IN,
+  JWT_REFRESH_TOKEN_EXPIRES_IN,
+  JWT_TOKEN_EXPIRES_IN,
+  type JwtPayload,
+  type Tokens,
+} from '@project/jwt'
 import type {
   User,
   FindUniqueRefreshTokenArgs,
@@ -10,6 +16,8 @@ import type {
   UpdateOneRefreshTokenArgs,
   CreateOneRefreshTokenArgs,
 } from '$/nestgraphql'
+import type { JwtOneTimePayload, JwtOneTimePayloadUseFieldType } from '@project/jwt'
+import { hashValueWithSHA256 } from '$/common/helpers/hash.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
 import { DatabaseService } from '$/database/database.service'
 
@@ -55,11 +63,34 @@ export class TokenService {
   }
 
   /**
+   * ワンタイムトークンを発行し、返却する
+   *
+   * @param user
+   * @param use
+   */
+  getOneTimeToken(user: User, use: JwtOneTimePayloadUseFieldType) {
+    const jti = generateUUIDv4()
+    const currentTimestamp = datetime()
+    const payload: Omit<JwtOneTimePayload, 'exp'> = {
+      jti,
+      iat: currentTimestamp.unix(),
+      sub: user.id,
+      use,
+      email: user.email,
+    }
+    return this.jwtService.sign(payload, {
+      secret: this.configService.get<string>('NEST_JWT_ONE_TIME_SECRET_KEY'),
+      expiresIn: JWT_ONE_TIME_TOKEN_EXPIRES_IN,
+    })
+  }
+
+  /**
    * RefreshTokenテーブルへレコードを1件追加
    *
    * @param args
    */
   async createRefreshToken(args: CreateOneRefreshTokenArgs) {
+    args.data.token = hashValueWithSHA256(args.data.token)
     return this.databaseService.refreshToken.create(args)
   }
 
@@ -78,6 +109,9 @@ export class TokenService {
    * @param args
    */
   async updateRefreshToken(args: UpdateOneRefreshTokenArgs) {
+    if (args.data.token && args.data.token.set) {
+      args.data.token.set = hashValueWithSHA256(args.data.token.set)
+    }
     return this.databaseService.refreshToken.update(args)
   }
 

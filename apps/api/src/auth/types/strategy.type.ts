@@ -1,5 +1,5 @@
 import type { User } from '$/nestgraphql'
-import type { JwtPayload } from '@project/jwt'
+import type { JwtPayload, JwtPayloadBase } from '@project/jwt'
 
 /**
  * `LocalStrategy.validate()`を実行した結果の型
@@ -11,4 +11,4 @@ export type LocalStrategyValidateReturnType = User
  *
  * NOTE: エンティティと分かるように便宜的に末尾にEntityとつけている
  */
-export type JwtStrategyValidationReturnType = JwtPayload & { user: User }
+export type JwtStrategyValidationReturnType<P extends JwtPayloadBase = JwtPayload> = P & { user: User }

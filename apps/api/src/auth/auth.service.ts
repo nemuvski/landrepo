@@ -1,14 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
+import { UserRole } from '@project/database'
 import { datetime } from '@project/datetime'
+import { JwtOneTimePayloadUseField } from '@project/jwt'
 import type { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
 import type { VerifySessionResponse } from '$/auth/dto/verify-session.response'
 import type { User } from '$/nestgraphql'
 import { TokenService } from '$/auth/token.service'
-import {
-  compareHashedValueWithBcrypt,
-  compareHashedValueWithSHA512,
-  hashValueWithSHA512,
-} from '$/common/helpers/hash.helper'
+import { compareHashedValueWithBcrypt, compareHashedValueWithSHA256 } from '$/common/helpers/hash.helper'
 import { getTokenByAuthorizationHeader } from '$/common/helpers/http-header.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
 import { MailService } from '$/mail/mail.service'
@@ -41,6 +39,56 @@ export class AuthService {
   }
 
   /**
+   * ユーザー新規登録
+   *
+   * @param email
+   * @param password
+   * @param role
+   */
+  async signUp(email: string, password: string, role: UserRole = UserRole.GENERAL): Promise<boolean> {
+    const user = await this.usersService.findUnique({ where: { email } })
+    // ユーザーレコードがあり、確認済みの場合は処理しない
+    if (user && user.signUpConfirmedAt) {
+      throw new ForbiddenException()
+    }
+
+    let oneTimeToken: string
+    if (user) {
+      oneTimeToken = this.tokenService.getOneTimeToken(user, JwtOneTimePayloadUseField.SignUp)
+      await this.usersService.update({
+        data: {
+          password: { set: password },
+          role: { set: role },
+          signUpConfirmationToken: { set: oneTimeToken },
+          signUpConfirmationSentAt: { set: datetime().toISOString() },
+        },
+        where: { id: user.id },
+      })
+    } else {
+      const newUser = await this.usersService.create({
+        data: {
+          email,
+          password,
+          role,
+        },
+      })
+      oneTimeToken = this.tokenService.getOneTimeToken(newUser, JwtOneTimePayloadUseField.SignUp)
+      await this.usersService.update({
+        data: {
+          signUpConfirmationToken: { set: oneTimeToken },
+          signUpConfirmationSentAt: { set: datetime().toISOString() },
+        },
+        where: { id: newUser.id },
+      })
+    }
+
+    // TODO: 確認メールを飛ばす
+    // await this.mailService.sendUserConfirmation()
+
+    return true
+  }
+
+  /**
    * トークンを発行
    *
    * @param user Userエンティティ
@@ -48,12 +96,11 @@ export class AuthService {
   async signIn(user: User): Promise<SignInUserResponse> {
     const sessionId = generateUUIDv4()
     const tokens = this.tokenService.getTokens(user, sessionId)
-    const hashedToken = hashValueWithSHA512(tokens.refreshToken)
     await this.tokenService.createRefreshToken({
       data: {
         id: sessionId,
         User: { connect: { id: user.id } },
-        token: hashedToken,
+        token: tokens.refreshToken,
         expiresIn: tokens.refreshTokenExpiresIn,
       },
     })
@@ -105,15 +152,14 @@ export class AuthService {
     }
 
     const currentRefreshToken = getTokenByAuthorizationHeader(authorizationValue)
-    const isMatched = compareHashedValueWithSHA512(currentRefreshToken, targetRefreshToken.token)
+    const isMatched = compareHashedValueWithSHA256(currentRefreshToken, targetRefreshToken.token)
     if (!isMatched) {
       throw new UnauthorizedException()
     }
 
     const newTokens = this.tokenService.getTokens(user, sessionId)
-    const hashedToken = hashValueWithSHA512(newTokens.refreshToken)
     await this.tokenService.updateRefreshToken({
-      data: { token: { set: hashedToken }, expiresIn: { set: newTokens.refreshTokenExpiresIn } },
+      data: { token: { set: newTokens.refreshToken }, expiresIn: { set: newTokens.refreshTokenExpiresIn } },
       where: { id_userId: { userId: user.id, id: sessionId } },
     })
 

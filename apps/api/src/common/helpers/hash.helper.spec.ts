@@ -1,8 +1,8 @@
 import {
   compareHashedValueWithBcrypt,
-  compareHashedValueWithSHA512,
+  compareHashedValueWithSHA256,
   hashValueWithBcrypt,
-  hashValueWithSHA512,
+  hashValueWithSHA256,
 } from '$/common/helpers/hash.helper'
 
 describe('common/helpers/hash.helper.ts', () => {
@@ -14,11 +14,11 @@ describe('common/helpers/hash.helper.ts', () => {
     expect(result).toBe(true)
   })
 
-  test('compareHashedValueWithSHA512()', () => {
+  test('compareHashedValueWithSHA256()', () => {
     const plainValue =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6InRlc3R2YWx1ZSIsImlhdCI6MTUxNjIzOTAyMn0.bCwdrORrqumXNPxFBD_AnTG2pmb0Q73WCTMveltC9ho'
-    const hashedValue = hashValueWithSHA512(plainValue)
-    const result = compareHashedValueWithSHA512(plainValue, hashedValue)
+    const hashedValue = hashValueWithSHA256(plainValue)
+    const result = compareHashedValueWithSHA256(plainValue, hashedValue)
     expect(result).toBe(true)
   })
 })

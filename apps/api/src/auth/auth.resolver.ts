@@ -3,6 +3,7 @@ import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 import { AuthService } from '$/auth/auth.service'
 import { SignInUserInput } from '$/auth/dto/sign-in-user.input'
 import { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
+import { SignUpUserInput } from '$/auth/dto/sign-up-user.input'
 import { VerifySessionResponse } from '$/auth/dto/verify-session.response'
 import { JwtAuthGuard } from '$/auth/jwt-auth.guard'
 import { JwtRefreshAuthGuard } from '$/auth/jwt-refresh-auth.guard'
@@ -12,6 +13,11 @@ import { WithJwtAuthGuardContext, WithLocalAuthGuardContext } from '$/common/typ
 @Resolver()
 export class AuthResolver {
   constructor(private authService: AuthService) {}
+
+  @Mutation(() => Boolean)
+  async signUp(@Args('input') input: SignUpUserInput) {
+    return this.authService.signUp(input.email, input.password, input.role)
+  }
 
   @Mutation(() => SignInUserResponse)
   @UseGuards(LocalAuthGuard)

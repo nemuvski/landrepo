@@ -6,6 +6,7 @@ type Mutation {
   reissueTokens: SignInUserResponse!
   signIn(input: SignInUserInput!): SignInUserResponse!
   signOut: Boolean!
+  signUp(input: SignUpUserInput!): Boolean!
   verifySession: VerifySessionResponse!
 }
 
@@ -37,6 +38,12 @@ type SignInUserResponse {
   refreshToken: String!
   refreshTokenExpiresIn: String!
   user: User!
+}
+
+input SignUpUserInput {
+  email: String!
+  password: String!
+  role: String
 }
 
 type User {
