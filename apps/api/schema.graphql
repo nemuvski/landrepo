@@ -2,13 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type Mutation {
-  createUser(data: UserCreateInput!): User!
   reissueTokens: SignInUserResponse!
   signIn(input: SignInUserInput!): SignInUserResponse!
   signOut: Boolean!
@@ -19,84 +13,17 @@ type Query {
   user(where: UserWhereUniqueInput!): User!
 }
 
-type RefreshToken {
-  User: User!
-  createdAt: DateTime!
-  expiresIn: DateTime!
-  id: String!
-  token: String!
-  updatedAt: DateTime!
-  userId: String!
-}
-
 type RefreshTokenCountAggregate {
   _all: Int!
-  createdAt: Int!
-  expiresIn: Int!
   id: Int!
-  token: Int!
-  updatedAt: Int!
-  userId: Int!
-}
-
-input RefreshTokenCreateManyUserInput {
-  createdAt: DateTime
-  expiresIn: DateTime!
-  id: String
-  token: String!
-  updatedAt: DateTime
-}
-
-input RefreshTokenCreateManyUserInputEnvelope {
-  data: [RefreshTokenCreateManyUserInput!]!
-  skipDuplicates: Boolean
-}
-
-input RefreshTokenCreateNestedManyWithoutUserInput {
-  connect: [RefreshTokenWhereUniqueInput!]
-  connectOrCreate: [RefreshTokenCreateOrConnectWithoutUserInput!]
-  create: [RefreshTokenCreateWithoutUserInput!]
-  createMany: RefreshTokenCreateManyUserInputEnvelope
-}
-
-input RefreshTokenCreateOrConnectWithoutUserInput {
-  create: RefreshTokenCreateWithoutUserInput!
-  where: RefreshTokenWhereUniqueInput!
-}
-
-input RefreshTokenCreateWithoutUserInput {
-  createdAt: DateTime
-  expiresIn: DateTime!
-  id: String
-  token: String!
-  updatedAt: DateTime
-}
-
-input RefreshTokenIdUserIdCompoundUniqueInput {
-  id: String!
-  userId: String!
 }
 
 type RefreshTokenMaxAggregate {
-  createdAt: DateTime
-  expiresIn: DateTime
   id: String
-  token: String
-  updatedAt: DateTime
-  userId: String
 }
 
 type RefreshTokenMinAggregate {
-  createdAt: DateTime
-  expiresIn: DateTime
   id: String
-  token: String
-  updatedAt: DateTime
-  userId: String
-}
-
-input RefreshTokenWhereUniqueInput {
-  id_userId: RefreshTokenIdUserIdCompoundUniqueInput
 }
 
 input SignInUserInput {
@@ -113,7 +40,6 @@ type SignInUserResponse {
 }
 
 type User {
-  RefreshToken: [RefreshToken!]
   _count: UserCount!
 
   """@Validator.@IsEmail()"""
@@ -131,14 +57,6 @@ type UserCountAggregate {
   email: Int!
   id: Int!
   role: Int!
-}
-
-input UserCreateInput {
-  RefreshToken: RefreshTokenCreateNestedManyWithoutUserInput
-  email: String!
-  id: String
-  password: String!
-  role: UserRole
 }
 
 type UserMaxAggregate {

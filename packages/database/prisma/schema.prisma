@@ -37,35 +37,41 @@ enum UserRole {
 
 model User {
   /// @Field(() => ID)
-  id           String         @id @default(uuid()) @db.Uuid
+  id                       String         @id @default(uuid()) @db.Uuid
   /// @Field(() => String)
-  role         UserRole       @default(GENERAL)
+  role                     UserRole       @default(GENERAL)
   /// @Validator.@IsEmail()
-  email        String         @unique
+  email                    String         @unique
   /// @HideField()
-  password     String
+  password                 String
   /// @HideField({ output: true, input: true })
-  createdAt    DateTime       @default(now())
+  createdAt                DateTime       @default(now())
   /// @HideField({ output: true, input: true })
-  updatedAt    DateTime       @updatedAt
-  /// @HideField({ output:false, input: false })
-  RefreshToken RefreshToken[]
+  updatedAt                DateTime       @updatedAt
+  /// @HideField({ output: true, input: false })
+  signUpConfirmedAt        DateTime?
+  /// @HideField({ output: true, input: true })
+  signUpConfirmationSentAt DateTime?
+  /// @HideField({ output: true, input: true })
+  signUpConfirmationToken  String?
+  /// @HideField({ output: true, input: true })
+  RefreshToken             RefreshToken[]
 }
 
 model RefreshToken {
-  /// @HideField({ output:false, input: false })
+  /// @HideField({ output: false, input: true })
   id        String   @default(uuid()) @db.Uuid
-  /// @HideField({ output:false, input: false })
+  /// @HideField({ output: true, input: true })
   token     String
-  /// @HideField({ output:false, input: false })
+  /// @HideField({ output: true, input: true })
   User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  /// @HideField({ output:false, input: false })
+  /// @HideField({ output: true, input: true })
   userId    String   @db.Uuid
-  /// @HideField({ output:false, input: false })
+  /// @HideField({ output: true, input: true })
   createdAt DateTime @default(now())
-  /// @HideField({ output:false, input: false })
+  /// @HideField({ output: true, input: true })
   updatedAt DateTime @updatedAt
-  /// @HideField({ output:false, input: false })
+  /// @HideField({ output: true, input: true })
   expiresIn DateTime
 
   @@id([id, userId])
