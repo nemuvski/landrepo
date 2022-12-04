@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
 import { AppLoggerModule } from './logger/app-logger.module'
+import { MailModule } from './mail/mail.module'
 import type { ApolloDriverConfig } from '@nestjs/apollo'
 import { AppController } from '$/app.controller'
 import { AuthModule } from '$/auth/auth.module'
@@ -38,6 +39,7 @@ import { UsersService } from '$/users/users.service'
     DatabaseModule,
     AuthModule,
     UsersModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [UsersService],

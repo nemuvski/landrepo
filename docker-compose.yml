@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
     image: landrepo/database:0.0.0
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - database_data:/var/lib/postgresql/data:rw
     environment:
@@ -22,6 +22,14 @@ services:
       options:
         max-size: '1m'
         max-file: '1'
+
+  # NOTE: https://qiita.com/kanemu/items/1f2da063c7e5b5477502
+  mailer:
+    container_name: mailer
+    image: kanemu/maildev-with-iconv
+    ports:
+      - '1080:80'
+      - '1025:25' #テスト用SMTPポート
 
 volumes:
   database_data:

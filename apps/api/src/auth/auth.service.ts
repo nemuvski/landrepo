@@ -11,11 +11,16 @@ import {
 } from '$/common/helpers/hash.helper'
 import { getTokenByAuthorizationHeader } from '$/common/helpers/http-header.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
+import { MailService } from '$/mail/mail.service'
 import { UsersService } from '$/users/users.service'
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService, private tokenService: TokenService) {}
+  constructor(
+    private usersService: UsersService,
+    private tokenService: TokenService,
+    private mailService: MailService
+  ) {}
 
   /**
    * Userの有無とパスワードの比較し、一致すればUserエンティティを返却

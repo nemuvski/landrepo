@@ -8,10 +8,11 @@ import { JwtStrategy } from '$/auth/jwt.strategy'
 import { LocalStrategy } from '$/auth/local.strategy'
 import { TokenService } from '$/auth/token.service'
 import { DatabaseService } from '$/database/database.service'
+import { MailModule } from '$/mail/mail.module'
 import { UsersModule } from '$/users/users.module'
 
 @Module({
-  imports: [UsersModule, PassportModule.register({ defaultStrategy: 'jwt' }), JwtModule.register({})],
+  imports: [UsersModule, PassportModule.register({ defaultStrategy: 'jwt' }), JwtModule.register({}), MailModule],
   providers: [AuthService, TokenService, DatabaseService, AuthResolver, LocalStrategy, JwtStrategy, JwtRefreshStrategy],
   exports: [AuthService, JwtModule],
 })

@@ -16,6 +16,8 @@
           ]
         }
       }
-    ]
+    ],
+    "assets": ["mail/templates/**/*.hbs"],
+    "watchAssets": true
   }
 }
