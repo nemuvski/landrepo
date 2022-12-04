@@ -19,6 +19,7 @@ export const validationEnvSchema = Joi.object({
   NEST_MAILER_TRANSPORT_SMTP_PORT: Joi.number().port().default(25),
   NEST_MAILER_TRANSPORT_INCOMING_USER: Joi.string().required(),
   NEST_MAILER_TRANSPORT_INCOMING_PASSWORD: Joi.string().required(),
+  NEXT_SITE_BASE_URL: Joi.string().uri().required(),
 })
 
 export const validationEnvOptions: Joi.ValidationOptions = {
