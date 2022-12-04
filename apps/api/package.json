@@ -20,6 +20,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@itsumono/utils": "^1.6.0",
     "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/apollo": "^10.1.6",
     "@nestjs/common": "^9.2.0",

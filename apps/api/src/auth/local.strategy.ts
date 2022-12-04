@@ -19,7 +19,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) implements IPasspo
   async validate(email: string, password: string): Promise<LocalStrategyValidateReturnType> {
     const user = await this.authService.validateUser(email, password)
     if (!user) {
-      throw new UnauthorizedException()
+      throw new UnauthorizedException('対象のユーザーが存在しません')
     }
     return user
   }

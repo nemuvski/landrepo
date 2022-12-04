@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
+import { JwtOneTimePayloadUseField } from '@project/jwt'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import type { IPassportJwtStrategy } from '$/auth/interfaces/passport-strategy.interface'
 import type { JwtStrategyValidationReturnType } from '$/auth/types/strategy.type'
@@ -21,12 +22,13 @@ export class JwtOneTimeStrategy
   }
 
   async validate(payload: JwtOneTimePayload): Promise<JwtStrategyValidationReturnType<JwtOneTimePayload>> {
+    if (!this.validUseField(payload)) {
+      throw new UnauthorizedException('無効なトークンです')
+    }
     const user = await this.usersService.findUnique({ where: { id: payload.sub } })
     if (!user) {
-      throw new UnauthorizedException()
+      throw new UnauthorizedException('対象のユーザーが存在しません')
     }
-
-    // TODO: payload.useによって検証方法を分ける
 
     /**
      * NOTE: 返値はContextに含まれる
@@ -35,5 +37,10 @@ export class JwtOneTimeStrategy
       ...payload,
       user,
     }
+  }
+
+  private validUseField(payload: JwtOneTimePayload) {
+    const { use } = payload
+    return use === JwtOneTimePayloadUseField.SignUp || use === JwtOneTimePayloadUseField.ChangeEmail
   }
 }

@@ -82,9 +82,7 @@ export class AuthService {
       })
     }
 
-    // TODO: 確認メールを飛ばす
-    // await this.mailService.sendUserConfirmation()
-
+    await this.mailService.sendSignUpConfirmation(email, { token: oneTimeToken })
     return true
   }
 

@@ -25,13 +25,13 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') implements IP
   async validate(payload: JwtPayload): Promise<JwtStrategyValidationReturnType> {
     const user = await this.usersService.findUnique({ where: { id: payload.sub } })
     if (!user) {
-      throw new UnauthorizedException()
+      throw new UnauthorizedException('対象のユーザーが存在しません')
     }
     const session = await this.tokenService.findUniqueRefreshToken({
       where: { id_userId: { id: payload.sid, userId: payload.sub } },
     })
     if (!session) {
-      throw new UnauthorizedException()
+      throw new UnauthorizedException('無効なセッションです')
     }
     /**
      * NOTE: 返値はContextに含まれる
