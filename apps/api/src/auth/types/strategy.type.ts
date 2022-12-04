@@ -1,5 +1,5 @@
 import type { User } from '$/nestgraphql'
-import type { JwtPayload, JwtPayloadBase } from '@project/jwt'
+import type { JwtPayload, JwtPayloadBase } from '@project/auth'
 
 /**
  * `LocalStrategy.validate()`を実行した結果の型

@@ -1,5 +1,5 @@
 import type { LocalStrategyValidateReturnType } from '$/auth/types/strategy.type'
-import type { JwtPayload, JwtPayloadBase } from '@project/jwt'
+import type { JwtPayload, JwtPayloadBase } from '@project/auth'
 
 export interface IPassportLocalStrategy {
   validate(email: string, passport: string): Promise<LocalStrategyValidateReturnType>

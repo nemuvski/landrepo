@@ -1,11 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
-import { JwtOneTimePayloadUseField } from '@project/jwt'
+import { JwtOneTimePayloadUseField, type JwtOneTimePayload } from '@project/auth'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import type { IPassportJwtStrategy } from '$/auth/interfaces/passport-strategy.interface'
 import type { JwtStrategyValidationReturnType } from '$/auth/types/strategy.type'
-import type { JwtOneTimePayload } from '@project/jwt'
 import { UsersService } from '$/users/users.service'
 
 @Injectable()

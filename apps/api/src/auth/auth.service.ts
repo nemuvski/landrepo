@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
+import { JwtOneTimePayloadUseField } from '@project/auth'
 import { UserRole } from '@project/database'
 import { datetime } from '@project/datetime'
-import { JwtOneTimePayloadUseField } from '@project/jwt'
 import type { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
 import type { VerifySessionResponse } from '$/auth/dto/verify-session.response'
 import type { User } from '$/nestgraphql'

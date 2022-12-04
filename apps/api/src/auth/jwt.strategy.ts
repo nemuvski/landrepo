@@ -4,7 +4,7 @@ import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import type { IPassportJwtStrategy } from '$/auth/interfaces/passport-strategy.interface'
 import type { JwtStrategyValidationReturnType } from '$/auth/types/strategy.type'
-import type { JwtPayload } from '@project/jwt'
+import type { JwtPayload } from '@project/auth'
 import { TokenService } from '$/auth/token.service'
 import { UsersService } from '$/users/users.service'
 

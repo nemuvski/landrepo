@@ -5,7 +5,7 @@ import { COOKIE_NAME_ACCESS_TOKEN, COOKIE_NAME_REFRESH_TOKEN } from '~/modules/a
 import { mustReissueToken } from '~/modules/auth/utils'
 import { defaultCookieOptions } from '~/modules/cookie'
 import { graphqlClient } from '~/modules/graphql'
-import type { Tokens } from '@project/jwt'
+import type { Tokens } from '@project/auth'
 import type { NextRequest, NextMiddleware } from 'next/server'
 
 async function verifySession(accessToken: string) {

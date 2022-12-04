@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
-import { datetime, getSeconds } from '@project/datetime'
 import {
   JWT_ONE_TIME_TOKEN_EXPIRES_IN,
   JWT_REFRESH_TOKEN_EXPIRES_IN,
   JWT_TOKEN_EXPIRES_IN,
   type JwtPayload,
   type Tokens,
-} from '@project/jwt'
+  type JwtOneTimePayload,
+  type JwtOneTimePayloadUseFieldType,
+} from '@project/auth'
+import { datetime, getSeconds } from '@project/datetime'
 import type {
   User,
   FindUniqueRefreshTokenArgs,
@@ -16,7 +18,6 @@ import type {
   UpdateOneRefreshTokenArgs,
   CreateOneRefreshTokenArgs,
 } from '$/nestgraphql'
-import type { JwtOneTimePayload, JwtOneTimePayloadUseFieldType } from '@project/jwt'
 import { hashValueWithSHA256 } from '$/common/helpers/hash.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
 import { DatabaseService } from '$/database/database.service'

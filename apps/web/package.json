@@ -26,7 +26,7 @@
     "@mantine/nprogress": "^5.8.2",
     "@project/database": "*",
     "@project/datetime": "*",
-    "@project/jwt": "*",
+    "@project/auth": "*",
     "axios": "^1.2.0",
     "envsafe": "^2.0.3",
     "graphql": "^16.6.0",

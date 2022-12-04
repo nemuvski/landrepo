@@ -8,7 +8,7 @@ import { COOKIE_NAME_ACCESS_TOKEN, COOKIE_NAME_REFRESH_TOKEN } from '~/modules/a
 import { defaultCookieOptions } from '~/modules/cookie'
 import { graphqlClient } from '~/modules/graphql'
 import { axiosNextApiRoute } from '~/modules/http-client'
-import type { Tokens } from '@project/jwt'
+import type { Tokens } from '@project/auth'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { UserEntity } from '~/entities/user.entity'
 import type { ApiRouteErrorResponse } from '~/exceptions/api-route.error'
