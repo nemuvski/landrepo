@@ -1,4 +1,5 @@
 import type { JwtStrategyValidationReturnType, LocalStrategyValidateReturnType } from '$/auth/types/strategy.type'
+import type { JwtOneTimePayload } from '@project/auth'
 import type { IncomingMessage } from 'node:http'
 
 /**
@@ -17,4 +18,8 @@ export interface WithLocalAuthGuardContext extends ContextBase {
 
 export interface WithJwtAuthGuardContext {
   req: ContextBase & { user: JwtStrategyValidationReturnType }
+}
+
+export interface WithJwtOneTimeGuardContext {
+  req: ContextBase & { user: JwtStrategyValidationReturnType<JwtOneTimePayload> }
 }

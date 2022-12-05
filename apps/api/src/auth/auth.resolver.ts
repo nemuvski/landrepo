@@ -6,9 +6,14 @@ import { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
 import { SignUpUserInput } from '$/auth/dto/sign-up-user.input'
 import { VerifySessionResponse } from '$/auth/dto/verify-session.response'
 import { JwtAuthGuard } from '$/auth/jwt-auth.guard'
+import { JwtOneTimeGuard } from '$/auth/jwt-one-time.guard'
 import { JwtRefreshAuthGuard } from '$/auth/jwt-refresh-auth.guard'
 import { LocalAuthGuard } from '$/auth/local-auth.guard'
-import { WithJwtAuthGuardContext, WithLocalAuthGuardContext } from '$/common/types/context.type'
+import {
+  WithJwtAuthGuardContext,
+  WithJwtOneTimeGuardContext,
+  WithLocalAuthGuardContext,
+} from '$/common/types/context.type'
 
 @Resolver()
 export class AuthResolver {
@@ -54,5 +59,13 @@ export class AuthResolver {
      */
     const authorizationValue = context.req.headers.authorization
     return this.authService.reissueTokens(user, sid, authorizationValue)
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(JwtOneTimeGuard)
+  async verifyTokenAtSignUp(@Context() context: WithJwtOneTimeGuardContext) {
+    const { user } = context.req.user
+    const authorizationValue = context.req.headers.authorization
+    return this.authService.verifyTokenAtSignUp(user, authorizationValue)
   }
 }

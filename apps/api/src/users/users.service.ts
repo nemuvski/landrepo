@@ -3,7 +3,7 @@ import { UserStatus } from '@project/database'
 import type { CreateOneUserArgs, FindUniqueUserArgs } from '$/nestgraphql'
 import type { UpdateOneUserArgs } from '$/nestgraphql'
 import type { User } from '@project/database'
-import { hashValueWithBcrypt } from '$/common/helpers/hash.helper'
+import { hashValueWithBcrypt, hashValueWithSHA256 } from '$/common/helpers/hash.helper'
 import { DatabaseService } from '$/database/database.service'
 
 @Injectable()
@@ -45,7 +45,12 @@ export class UsersService {
    * @param args
    */
   async create(args: CreateOneUserArgs) {
-    args.data.password = await hashValueWithBcrypt(args.data.password)
+    if (args.data.password) {
+      args.data.password = await hashValueWithBcrypt(args.data.password)
+    }
+    if (args.data.signUpConfirmationToken) {
+      args.data.signUpConfirmationToken = hashValueWithSHA256(args.data.signUpConfirmationToken)
+    }
     return this.databaseService.user.create(args)
   }
 
@@ -54,9 +59,11 @@ export class UsersService {
    * @param args
    */
   async update(args: UpdateOneUserArgs) {
-    // パスワードの指定がある場合はハッシュ化する
     if (args.data.password && args.data.password.set) {
       args.data.password.set = await hashValueWithBcrypt(args.data.password.set)
+    }
+    if (args.data.signUpConfirmationToken && args.data.signUpConfirmationToken.set) {
+      args.data.signUpConfirmationToken.set = hashValueWithSHA256(args.data.signUpConfirmationToken.set)
     }
     return this.databaseService.user.update(args)
   }

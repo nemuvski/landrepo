@@ -8,6 +8,7 @@ type Mutation {
   signOut: Boolean!
   signUp(input: SignUpUserInput!): Boolean!
   verifySession: VerifySessionResponse!
+  verifyTokenAtSignUp: Boolean!
 }
 
 type Query {

@@ -47,7 +47,7 @@ export class AuthService {
   async signUp(email: string, password: string, role: UserRole = UserRole.GENERAL): Promise<boolean> {
     const user = await this.usersService.findUnique({ where: { email } })
     // ユーザーレコードがあり、確認済みの場合は処理しない
-    if (user && user.signUpConfirmedAt) {
+    if (user && this.usersService.isActiveUser(user)) {
       throw new ForbiddenException()
     }
 
@@ -160,5 +160,33 @@ export class AuthService {
       ...newTokens,
       user,
     }
+  }
+
+  /**
+   * 新規登録時の確認メール中のトークンを検証し、あっていればユーザーのステータスを確認済みに更新する
+   *
+   * @param user
+   * @param authorizationValue
+   */
+  async verifyTokenAtSignUp(user: User, authorizationValue?: string): Promise<boolean> {
+    if (!authorizationValue || !user.signUpConfirmationToken) {
+      throw new UnauthorizedException()
+    }
+    const token = getTokenByAuthorizationHeader(authorizationValue)
+    const isMatched = compareHashedValueWithSHA256(token, user.signUpConfirmationToken)
+    if (!isMatched) {
+      throw new UnauthorizedException()
+    }
+
+    await this.usersService.update({
+      where: { id: user.id },
+      data: {
+        status: { set: UserStatus.ACTIVE },
+        signUpConfirmationToken: { set: '' },
+        signUpConfirmedAt: { set: datetime().toISOString() },
+      },
+    })
+
+    return true
   }
 }
