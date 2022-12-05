@@ -11,7 +11,9 @@ const Home: NextPage = () => {
       <Meta pageName='ホーム' />
 
       <Card radius='md' shadow='sm' withBorder>
-        <InBoundButtonLink href='/sign-in'>サインイン</InBoundButtonLink>
+        ログインしている
+        <br />
+        <InBoundButtonLink href='/sign-out'>サインアウト</InBoundButtonLink>
       </Card>
     </ContentFirstLayout>
   )
@@ -19,7 +21,7 @@ const Home: NextPage = () => {
 
 export const getServerSideProps = withSession({
   routeGuard: {
-    acceptRoles: { GENERAL: true, ADMIN: true },
+    acceptRule: true,
     fallback: { redirect: { destination: '/sign-in', permanent: false } },
   },
 })

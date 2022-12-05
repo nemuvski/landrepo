@@ -1,5 +1,5 @@
 import { Card } from '@mantine/core'
-import SignInForm from '~/components/features/SignInForm'
+import SignUpForm from '~/components/features/SignUpForm'
 import ContentFirstLayout from '~/components/layouts/ContentFirstLayout'
 import Meta from '~/components/Meta'
 import withSession from '~/modules/auth/middlewares/with-session'
@@ -8,10 +8,10 @@ import type { NextPage } from 'next'
 const SignInPage: NextPage = () => {
   return (
     <ContentFirstLayout>
-      <Meta pageName='サインイン' />
+      <Meta pageName='サインアップ' />
 
       <Card radius='md' shadow='sm' withBorder>
-        <SignInForm />
+        <SignUpForm />
       </Card>
     </ContentFirstLayout>
   )
