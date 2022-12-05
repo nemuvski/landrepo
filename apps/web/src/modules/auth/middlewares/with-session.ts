@@ -1,3 +1,4 @@
+import { isBoolean } from '@itsumono/utils'
 import { parseCookies } from 'nookies'
 import { gql } from 'urql'
 import { COOKIE_NAME_ACCESS_TOKEN } from '~/modules/auth/constants'
@@ -28,8 +29,8 @@ type WithSessionOptions<
 > = {
   // routeGuard未指定の場合はアクセス制限しない
   routeGuard?: {
-    // 許可するUserRoleを指定
-    acceptRoles: Record<UserRole, boolean | undefined>
+    // 許可するUserRoleを指定 (trueの場合はログインしているユーザーのみ許可, falseの場合はログインしていないユーザーのみ許可)
+    acceptRule: boolean | Record<UserRole, boolean | undefined>
     // ガードではじかれた場合の挙動の設定
     fallback: { notFound: true } | { redirect: Redirect }
   }
@@ -87,10 +88,21 @@ function withSession<
         }
       }
 
-      // ルートガードの指定がある場合は、アクセスできるユーザーであるかチェックする
+      // ルートガードの指定がある場合は、許可のある閲覧者かを判定する
       if (routeGuard) {
-        if (!session || !routeGuard.acceptRoles[session.user.role]) {
-          return routeGuard.fallback
+        if (isBoolean(routeGuard.acceptRule)) {
+          /**
+           * [真偽値の場合]
+           * - ルールの値がTrueの場合は、sessionがあればOK
+           * - ルールの値がFalseの場合は、sessionがなければOK
+           */
+          if ((routeGuard.acceptRule && !session) || (!routeGuard.acceptRule && session)) {
+            return routeGuard.fallback
+          }
+        } else {
+          if (!session || !routeGuard.acceptRule[session.user.role]) {
+            return routeGuard.fallback
+          }
         }
       }
 
