@@ -2,7 +2,17 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input ClaimChangingOwnEmailInput {
+  newEmail: String!
+}
+
+input ClaimChangingPasswordInput {
+  email: String!
+}
+
 type Mutation {
+  claimChangingOwnEmail(input: ClaimChangingOwnEmailInput!): Boolean!
+  claimChangingPassword(input: ClaimChangingPasswordInput!): Boolean!
   reissueTokens: SignInUserResponse!
   signIn(input: SignInUserInput!): SignInUserResponse!
   signOut: Boolean!

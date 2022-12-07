@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtOneTimePayloadUseField } from '@project/auth'
 import { UserRole, UserStatus, type User } from '@project/database'
 import { datetime } from '@project/datetime'
@@ -8,7 +8,7 @@ import { TokenService } from '$/auth/token.service'
 import { compareHashedValueWithBcrypt, compareHashedValueWithSHA256 } from '$/common/helpers/hash.helper'
 import { getTokenByAuthorizationHeader } from '$/common/helpers/http-header.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
-import { EMPTY_STRING } from '$/database/constants'
+import { EMPTY_VALUE } from '$/database/constants'
 import { MailService } from '$/mail/mail.service'
 import { UsersService } from '$/users/users.service'
 
@@ -183,11 +183,61 @@ export class AuthService {
       where: { id: user.id },
       data: {
         status: { set: UserStatus.ACTIVE },
-        signUpConfirmationToken: { set: EMPTY_STRING },
+        signUpConfirmationToken: { set: EMPTY_VALUE },
         signUpConfirmedAt: { set: datetime().toISOString() },
       },
     })
 
+    return true
+  }
+
+  /**
+   * メールアドレス変更のメールを送信する
+   *
+   * @param user
+   * @param newEmail
+   */
+  async claimChangingOwnEmail(user: User, newEmail: string) {
+    // 新しいメールアドレスが既にユーザーに利用されている場合はNG
+    const newEmailUsingUser = await this.usersService.findUnique({ where: { email: newEmail } })
+    if (newEmailUsingUser) {
+      throw new BadRequestException()
+    }
+
+    const oneTimeToken = this.tokenService.getOneTimeToken(user, JwtOneTimePayloadUseField.ChangeEmail)
+    await this.usersService.update({
+      data: {
+        changeEmailCompletedAt: { set: EMPTY_VALUE },
+        changeEmailToken: { set: oneTimeToken },
+        changeEmail: { set: newEmail },
+        changeEmailSentAt: { set: datetime().toISOString() },
+      },
+      where: { id: user.id },
+    })
+    await this.mailService.sendChangeEmail(newEmail, { token: oneTimeToken })
+    return true
+  }
+
+  /**
+   * パスワード変更のメールを送信する
+   *
+   * @param email
+   */
+  async claimChangingPassword(email: string) {
+    const user = await this.usersService.findUnique({ where: { email } })
+    if (!user) {
+      throw new BadRequestException()
+    }
+    const oneTimeToken = this.tokenService.getOneTimeToken(user, JwtOneTimePayloadUseField.ChangePassword)
+    await this.usersService.update({
+      data: {
+        changePasswordCompletedAt: { set: EMPTY_VALUE },
+        changePasswordToken: { set: oneTimeToken },
+        changePasswordSentAt: { set: datetime().toISOString() },
+      },
+      where: { id: user.id },
+    })
+    await this.mailService.sendChangePassword(email, { token: oneTimeToken })
     return true
   }
 }

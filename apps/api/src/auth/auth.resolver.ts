@@ -1,6 +1,8 @@
 import { UseGuards } from '@nestjs/common'
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 import { AuthService } from '$/auth/auth.service'
+import { ClaimChangingOwnEmailInput } from '$/auth/dto/claim-changing-email.input'
+import { ClaimChangingPasswordInput } from '$/auth/dto/claim-changing-password.input'
 import { SignInUserInput } from '$/auth/dto/sign-in-user.input'
 import { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
 import { SignUpUserInput } from '$/auth/dto/sign-up-user.input'
@@ -67,5 +69,20 @@ export class AuthResolver {
     const { user } = context.req.user
     const authorizationValue = context.req.headers.authorization
     return this.authService.verifyTokenAtSignUp(user, authorizationValue)
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(JwtAuthGuard)
+  async claimChangingOwnEmail(
+    @Args('input') input: ClaimChangingOwnEmailInput,
+    @Context() context: WithJwtAuthGuardContext
+  ) {
+    const { user } = context.req.user
+    return this.authService.claimChangingOwnEmail(user, input.newEmail)
+  }
+
+  @Mutation(() => Boolean)
+  async claimChangingPassword(@Args('input') input: ClaimChangingPasswordInput) {
+    return this.authService.claimChangingPassword(input.email)
   }
 }

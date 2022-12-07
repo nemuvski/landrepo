@@ -1,7 +1,7 @@
 import { Either } from '@itsumono/react'
 import { isString } from '@itsumono/utils'
 import { Card } from '@mantine/core'
-import { PARAM_NAME_TOKEN_PATH_SIGN_UP_CONFIRMATION } from '@project/auth'
+import { PARAM_NAME_TOKEN } from '@project/auth'
 import { gql } from 'urql'
 import ContentFirstLayout from '~/components/layouts/ContentFirstLayout'
 import Meta from '~/components/Meta'
@@ -53,7 +53,7 @@ export const getServerSideProps = withSession<ServerSideResult>({
         return { notFound: true }
       }
 
-      const token = context.query[PARAM_NAME_TOKEN_PATH_SIGN_UP_CONFIRMATION]
+      const token = context.query[PARAM_NAME_TOKEN]
       if (!isString(token) || !token) {
         return { notFound: true }
       }

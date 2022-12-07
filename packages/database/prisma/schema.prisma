@@ -44,27 +44,41 @@ enum UserStatus {
 
 model User {
   /// @Field(() => ID)
-  id                       String         @id @default(uuid()) @db.Uuid
+  id                        String         @id @default(uuid()) @db.Uuid
   /// @Field(() => String)
-  role                     UserRole       @default(GENERAL)
+  role                      UserRole       @default(GENERAL)
   /// @Validator.@IsEmail()
-  email                    String         @unique
+  email                     String         @unique
   /// @HideField()
-  password                 String
+  password                  String
   /// @HideField({ output: false, input: true })
-  status                   UserStatus     @default(NOT_CONFIRMED)
+  status                    UserStatus     @default(NOT_CONFIRMED)
   /// @HideField({ output: true, input: true })
-  createdAt                DateTime       @default(now())
+  createdAt                 DateTime       @default(now())
   /// @HideField({ output: true, input: true })
-  updatedAt                DateTime       @updatedAt
+  updatedAt                 DateTime       @updatedAt
   /// @HideField({ output: true, input: false })
-  signUpConfirmedAt        DateTime?
+  signUpConfirmedAt         DateTime?
   /// @HideField({ output: true, input: true })
-  signUpConfirmationSentAt DateTime?
+  signUpConfirmationSentAt  DateTime?
   /// @HideField({ output: true, input: true })
-  signUpConfirmationToken  String?
+  signUpConfirmationToken   String?
   /// @HideField({ output: true, input: true })
-  RefreshToken             RefreshToken[]
+  changeEmail               String?
+  /// @HideField({ output: true, input: true })
+  changeEmailCompletedAt    DateTime?
+  /// @HideField({ output: true, input: true })
+  changeEmailSentAt         DateTime?
+  /// @HideField({ output: true, input: true })
+  changeEmailToken          String?
+  /// @HideField({ output: true, input: true })
+  changePasswordCompletedAt DateTime?
+  /// @HideField({ output: true, input: true })
+  changePasswordSentAt      DateTime?
+  /// @HideField({ output: true, input: true })
+  changePasswordToken       String?
+  /// @HideField({ output: true, input: true })
+  RefreshToken              RefreshToken[]
 }
 
 model RefreshToken {

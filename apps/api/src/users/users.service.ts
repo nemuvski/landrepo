@@ -51,6 +51,12 @@ export class UsersService {
     if (args.data.signUpConfirmationToken) {
       args.data.signUpConfirmationToken = hashValueWithSHA256(args.data.signUpConfirmationToken)
     }
+    if (args.data.changeEmailToken) {
+      args.data.changeEmailToken = hashValueWithSHA256(args.data.changeEmailToken)
+    }
+    if (args.data.changePasswordToken) {
+      args.data.changePasswordToken = hashValueWithSHA256(args.data.changePasswordToken)
+    }
     return this.databaseService.user.create(args)
   }
 
@@ -64,6 +70,12 @@ export class UsersService {
     }
     if (args.data.signUpConfirmationToken && args.data.signUpConfirmationToken.set) {
       args.data.signUpConfirmationToken.set = hashValueWithSHA256(args.data.signUpConfirmationToken.set)
+    }
+    if (args.data.changeEmailToken && args.data.changeEmailToken.set) {
+      args.data.changeEmailToken.set = hashValueWithSHA256(args.data.changeEmailToken.set)
+    }
+    if (args.data.changePasswordToken && args.data.changePasswordToken.set) {
+      args.data.changePasswordToken.set = hashValueWithSHA256(args.data.changePasswordToken.set)
     }
     return this.databaseService.user.update(args)
   }
