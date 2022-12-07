@@ -8,7 +8,6 @@ import { JwtRefreshStrategy } from '$/auth/jwt-refresh.strategy'
 import { JwtStrategy } from '$/auth/jwt.strategy'
 import { LocalStrategy } from '$/auth/local.strategy'
 import { TokenService } from '$/auth/token.service'
-import { DatabaseService } from '$/database/database.service'
 import { MailModule } from '$/mail/mail.module'
 import { UsersModule } from '$/users/users.module'
 
@@ -17,7 +16,6 @@ import { UsersModule } from '$/users/users.module'
   providers: [
     AuthService,
     TokenService,
-    DatabaseService,
     AuthResolver,
     LocalStrategy,
     JwtStrategy,
