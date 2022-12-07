@@ -42,6 +42,7 @@ export interface JwtOneTimePayload extends JwtPayloadBase {
 
 export const JwtOneTimePayloadUseField = {
   SignUp: 'sign-up',
+  ChangePassword: 'change-password',
   ChangeEmail: 'change-email',
 } as const
 export type JwtOneTimePayloadUseFieldType = typeof JwtOneTimePayloadUseField[keyof typeof JwtOneTimePayloadUseField]
