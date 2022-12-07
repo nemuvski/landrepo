@@ -8,6 +8,7 @@ import { TokenService } from '$/auth/token.service'
 import { compareHashedValueWithBcrypt, compareHashedValueWithSHA256 } from '$/common/helpers/hash.helper'
 import { getTokenByAuthorizationHeader } from '$/common/helpers/http-header.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
+import { EMPTY_STRING } from '$/database/constants'
 import { MailService } from '$/mail/mail.service'
 import { UsersService } from '$/users/users.service'
 
@@ -182,7 +183,7 @@ export class AuthService {
       where: { id: user.id },
       data: {
         status: { set: UserStatus.ACTIVE },
-        signUpConfirmationToken: { set: '' },
+        signUpConfirmationToken: { set: EMPTY_STRING },
         signUpConfirmedAt: { set: datetime().toISOString() },
       },
     })
