@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@project/database": "*"
+    "@project/database": "*",
+    "jwt-decode": "^3.1.2"
   },
   "devDependencies": {
     "@project/tsconfig": "*",
