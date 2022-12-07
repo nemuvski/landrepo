@@ -8,7 +8,6 @@ import { TokenService } from '$/auth/token.service'
 import { compareHashedValueWithBcrypt, compareHashedValueWithSHA256 } from '$/common/helpers/hash.helper'
 import { getTokenByAuthorizationHeader } from '$/common/helpers/http-header.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
-import { EMPTY_VALUE } from '$/database/constants'
 import { MailService } from '$/mail/mail.service'
 import { UsersService } from '$/users/users.service'
 
@@ -183,7 +182,7 @@ export class AuthService {
       where: { id: user.id },
       data: {
         status: { set: UserStatus.ACTIVE },
-        signUpConfirmationToken: { set: EMPTY_VALUE },
+        signUpConfirmationToken: { set: null },
         signUpConfirmedAt: { set: datetime().toISOString() },
       },
     })
@@ -207,7 +206,7 @@ export class AuthService {
     const oneTimeToken = this.tokenService.getOneTimeToken(user, JwtOneTimePayloadUseField.ChangeEmail)
     await this.usersService.update({
       data: {
-        changeEmailCompletedAt: { set: EMPTY_VALUE },
+        changeEmailCompletedAt: { set: null },
         changeEmailToken: { set: oneTimeToken },
         changeEmail: { set: newEmail },
         changeEmailSentAt: { set: datetime().toISOString() },
@@ -231,7 +230,7 @@ export class AuthService {
     const oneTimeToken = this.tokenService.getOneTimeToken(user, JwtOneTimePayloadUseField.ChangePassword)
     await this.usersService.update({
       data: {
-        changePasswordCompletedAt: { set: EMPTY_VALUE },
+        changePasswordCompletedAt: { set: null },
         changePasswordToken: { set: oneTimeToken },
         changePasswordSentAt: { set: datetime().toISOString() },
       },

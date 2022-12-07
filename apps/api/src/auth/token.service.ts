@@ -11,14 +11,10 @@ import {
   type JwtOneTimePayloadUseFieldType,
 } from '@project/auth'
 import { datetime, getSeconds } from '@project/datetime'
-import type {
-  User,
-  FindUniqueRefreshTokenArgs,
-  DeleteOneRefreshTokenArgs,
-  UpdateOneRefreshTokenArgs,
-  CreateOneRefreshTokenArgs,
-} from '$/nestgraphql'
+import type { User } from '$/nestgraphql'
+import type Prisma from '$/prisma'
 import { hashValueWithSHA256 } from '$/common/helpers/hash.helper'
+import { normalizedStringFieldUpdateOperationsInput } from '$/common/helpers/prisma.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
 import { DatabaseService } from '$/database/database.service'
 
@@ -90,7 +86,7 @@ export class TokenService {
    *
    * @param args
    */
-  async createRefreshToken(args: CreateOneRefreshTokenArgs) {
+  async createRefreshToken(args: Prisma.RefreshTokenCreateArgs) {
     args.data.token = hashValueWithSHA256(args.data.token)
     return this.databaseService.refreshToken.create(args)
   }
@@ -100,7 +96,7 @@ export class TokenService {
    *
    * @param args
    */
-  async removeRefreshToken(args: DeleteOneRefreshTokenArgs) {
+  async removeRefreshToken(args: Prisma.RefreshTokenDeleteArgs) {
     return this.databaseService.refreshToken.delete(args)
   }
 
@@ -109,9 +105,12 @@ export class TokenService {
    *
    * @param args
    */
-  async updateRefreshToken(args: UpdateOneRefreshTokenArgs) {
-    if (args.data.token && args.data.token.set) {
-      args.data.token.set = hashValueWithSHA256(args.data.token.set)
+  async updateRefreshToken(args: Prisma.RefreshTokenUpdateArgs) {
+    if (args.data.token) {
+      args.data.token = normalizedStringFieldUpdateOperationsInput(args.data.token)
+      if (args.data.token.set) {
+        args.data.token.set = hashValueWithSHA256(args.data.token.set)
+      }
     }
     return this.databaseService.refreshToken.update(args)
   }
@@ -121,7 +120,7 @@ export class TokenService {
    *
    * @param args
    */
-  async findUniqueRefreshToken(args: FindUniqueRefreshTokenArgs) {
+  async findUniqueRefreshToken(args: Prisma.RefreshTokenFindUniqueArgs) {
     return this.databaseService.refreshToken.findUnique(args)
   }
 }

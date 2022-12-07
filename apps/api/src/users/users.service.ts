@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { UserStatus } from '@project/database'
-import type { CreateOneUserArgs, FindUniqueUserArgs } from '$/nestgraphql'
-import type { UpdateOneUserArgs } from '$/nestgraphql'
+import type Prisma from '$/prisma'
 import type { User } from '@project/database'
 import { hashValueWithBcrypt, hashValueWithSHA256 } from '$/common/helpers/hash.helper'
+import {
+  normalizedNullableStringFieldUpdateOperationsInput,
+  normalizedStringFieldUpdateOperationsInput,
+} from '$/common/helpers/prisma.helper'
 import { DatabaseService } from '$/database/database.service'
 
 @Injectable()
@@ -33,7 +36,7 @@ export class UsersService {
    *
    * @param args
    */
-  async findUnique(args: FindUniqueUserArgs) {
+  async findUnique(args: Prisma.UserFindUniqueArgs) {
     return this.databaseService.user.findUnique(args)
   }
 
@@ -44,7 +47,7 @@ export class UsersService {
    *
    * @param args
    */
-  async create(args: CreateOneUserArgs) {
+  async create(args: Prisma.UserCreateArgs) {
     if (args.data.password) {
       args.data.password = await hashValueWithBcrypt(args.data.password)
     }
@@ -62,20 +65,35 @@ export class UsersService {
 
   /**
    * Userテーブルのレコードを更新
+   *
    * @param args
    */
-  async update(args: UpdateOneUserArgs) {
-    if (args.data.password && args.data.password.set) {
-      args.data.password.set = await hashValueWithBcrypt(args.data.password.set)
+  async update(args: Prisma.UserUpdateArgs) {
+    if (args.data.password) {
+      args.data.password = normalizedStringFieldUpdateOperationsInput(args.data.password)
+      if (args.data.password.set) {
+        args.data.password.set = await hashValueWithBcrypt(args.data.password.set)
+      }
     }
-    if (args.data.signUpConfirmationToken && args.data.signUpConfirmationToken.set) {
-      args.data.signUpConfirmationToken.set = hashValueWithSHA256(args.data.signUpConfirmationToken.set)
+    if (args.data.signUpConfirmationToken) {
+      args.data.signUpConfirmationToken = normalizedNullableStringFieldUpdateOperationsInput(
+        args.data.signUpConfirmationToken
+      )
+      if (args.data.signUpConfirmationToken.set) {
+        args.data.signUpConfirmationToken.set = hashValueWithSHA256(args.data.signUpConfirmationToken.set)
+      }
     }
-    if (args.data.changeEmailToken && args.data.changeEmailToken.set) {
-      args.data.changeEmailToken.set = hashValueWithSHA256(args.data.changeEmailToken.set)
+    if (args.data.changeEmailToken) {
+      args.data.changeEmailToken = normalizedNullableStringFieldUpdateOperationsInput(args.data.changeEmailToken)
+      if (args.data.changeEmailToken.set) {
+        args.data.changeEmailToken.set = hashValueWithSHA256(args.data.changeEmailToken.set)
+      }
     }
-    if (args.data.changePasswordToken && args.data.changePasswordToken.set) {
-      args.data.changePasswordToken.set = hashValueWithSHA256(args.data.changePasswordToken.set)
+    if (args.data.changePasswordToken) {
+      args.data.changePasswordToken = normalizedNullableStringFieldUpdateOperationsInput(args.data.changePasswordToken)
+      if (args.data.changePasswordToken.set) {
+        args.data.changePasswordToken.set = hashValueWithSHA256(args.data.changePasswordToken.set)
+      }
     }
     return this.databaseService.user.update(args)
   }
