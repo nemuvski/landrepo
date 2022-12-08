@@ -1,0 +1,10 @@
+{
+  "extends": "@project/tsconfig/tsconfig.node.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "baseUrl": "./",
+
+    "sourceMap": false,
+    "incremental": false
+  }
+}
