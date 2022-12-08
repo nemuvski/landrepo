@@ -73,7 +73,6 @@ export class TokenService {
       iat: currentTimestamp.unix(),
       sub: user.id,
       use,
-      email: user.email,
     }
     return this.jwtService.sign(payload, {
       secret: this.configService.get<string>('NEST_JWT_ONE_TIME_SECRET_KEY'),

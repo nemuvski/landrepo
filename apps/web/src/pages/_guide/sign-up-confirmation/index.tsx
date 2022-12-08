@@ -15,7 +15,6 @@ type ServerSideResult = {
 }
 
 const GuideSignUpConfirmationPage: NextPage<ServerSideResult> = ({ isValidToken }) => {
-  console.log(isValidToken)
   return (
     <ContentFirstLayout>
       <Meta nofollow noindex />

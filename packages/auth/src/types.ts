@@ -36,8 +36,6 @@ export interface JwtPayload extends JwtPayloadBase {
 export interface JwtOneTimePayload extends JwtPayloadBase {
   // トークンの用途
   use: JwtOneTimePayloadUseFieldType
-  // メールアドレス (新規登録で確認メール等で利用する)
-  email: string
 }
 
 export const JwtOneTimePayloadUseField = {
