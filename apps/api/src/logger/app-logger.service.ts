@@ -60,10 +60,11 @@ export class AppLoggerService implements LoggerService {
     })
   }
 
-  error(message: string, trace: string) {
+  error(message: string, trace?: string) {
+    const msg = message + (trace ? `:${trace}` : '')
     this.logger.log({
       level: 'error',
-      message: `${message}:${trace}`,
+      message: msg,
     })
   }
 
