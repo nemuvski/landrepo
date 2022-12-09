@@ -55,10 +55,10 @@ export type ApiRouteErrorResponse = {
 /**
  * Next.jsのAPI Routes機能中で発生したエラーを扱うErrorクラス
  */
-export default class ApiRouteError extends Error {
+export default class ApiRouteError extends Error implements ApiRouteErrorResponse {
   statusCode: HttpStatusType
   statusName: string
-  errorSource: ErrorSourceType
+  source: ErrorSourceType
 
   constructor(statusCode: HttpStatusType, message?: string) {
     let errorSource: ErrorSourceType = 'others'
@@ -72,7 +72,7 @@ export default class ApiRouteError extends Error {
 
     this.statusCode = HttpStatus[statusCode].code
     this.statusName = HttpStatus[statusCode].name
-    this.errorSource = errorSource
+    this.source = errorSource
   }
 
   formatResponseBody(): ApiRouteErrorResponse {
@@ -80,7 +80,7 @@ export default class ApiRouteError extends Error {
       statusCode: this.statusCode,
       statusName: this.statusName,
       message: this.message,
-      source: this.errorSource,
+      source: this.source,
     }
   }
 
