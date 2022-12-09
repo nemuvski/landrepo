@@ -88,7 +88,7 @@ export async function signOutApiRoute(req: NextApiRequest, res: NextApiResponse)
     destroyCookie({ res }, COOKIE_NAME_ACCESS_TOKEN, defaultCookieOptions)
     destroyCookie({ res }, COOKIE_NAME_REFRESH_TOKEN, defaultCookieOptions)
 
-    res.status(204).json({})
+    res.status(200).json({ op: 'sign-out' })
   } catch (error) {
     console.error(error)
     if (isApiRouteError(error)) {
