@@ -23,6 +23,17 @@ const securityHeaders = [
     key: 'X-Download-Options',
     value: 'noopen',
   },
+  /**
+   * @see {@link https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag}
+   */
+  {
+    key: 'X-Robots-Tag',
+    value: 'noindex, nofollow, noarchive, noimageindex',
+  },
+  {
+    key: 'Cache-Control',
+    value: 'private',
+  },
 ]
 
 /** @type {import('next').NextConfig} */

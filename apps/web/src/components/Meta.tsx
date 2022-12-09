@@ -9,12 +9,17 @@ type Props = {
   nofollow?: boolean
 }
 
+/**
+ * ページのメタ情報を設定する
+ *
+ * ※ noindex,nofollowはヘッダーで設定しているケースがあるので注意
+ */
 const Meta: RC.WithoutChildren<Props> = ({
   pageType = 'article',
   pageName,
   description,
-  noindex = false,
-  nofollow = false,
+  noindex = true,
+  nofollow = true,
 }) => {
   return (
     <NextSeo

@@ -20,12 +20,13 @@ const MyApp = ({ Component, pageProps: { session, ...pageProps } }: AppPropsWith
           { name: 'viewport', content: 'width=device-width, initial-scale=1' },
           { name: 'format-detection', content: 'telephone=no, email=no, address=no' },
           { name: 'application-version', content: appVersion },
+          { name: 'robots', content: 'noarchive,noodp' },
         ]}
         additionalLinkTags={[{ rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }]}
         canonical={siteUrl}
         twitter={{ cardType: 'summary' }}
         openGraph={{
-          site_name: siteName,
+          siteName,
           type: 'website',
           url: siteUrl,
           description: '',
