@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
+import { AuthErrorMessage } from '@project/api-error'
 import { Strategy } from 'passport-local'
 import type { IPassportLocalStrategy } from '$/auth/interfaces/passport-strategy.interface'
 import type { LocalStrategyValidateReturnType } from '$/auth/types/strategy.type'
@@ -20,13 +21,13 @@ export class LocalStrategy extends PassportStrategy(Strategy) implements IPasspo
   async validate(email: string, password: string): Promise<LocalStrategyValidateReturnType> {
     const user = await this.authService.validateUser(email, password)
     if (!user) {
-      throw new UnauthorizedException('対象のユーザーが存在しません')
+      throw new UnauthorizedException(AuthErrorMessage.UserNotFound)
     }
     if (this.usersService.isNotConfirmedUser(user)) {
-      throw new UnauthorizedException('まだ確認されていないユーザーです')
+      throw new UnauthorizedException(AuthErrorMessage.UserNotConfirmed)
     }
     if (!this.usersService.isActiveUser(user)) {
-      throw new UnauthorizedException('ログインできないユーザーです')
+      throw new UnauthorizedException(AuthErrorMessage.InvalidUser)
     }
     return user
   }

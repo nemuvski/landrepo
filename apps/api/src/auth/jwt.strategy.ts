@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
+import { AuthErrorMessage } from '@project/api-error'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import type { IPassportJwtStrategy } from '$/auth/interfaces/passport-strategy.interface'
 import type { JwtStrategyValidationReturnType } from '$/auth/types/strategy.type'
@@ -25,16 +26,16 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') implements IP
   async validate(payload: JwtPayload): Promise<JwtStrategyValidationReturnType> {
     const user = await this.usersService.findUnique({ where: { id: payload.sub } })
     if (!user) {
-      throw new UnauthorizedException('対象のユーザーが存在しません')
+      throw new UnauthorizedException(AuthErrorMessage.UserNotFound)
     }
     if (!this.usersService.isActiveUser(user)) {
-      throw new UnauthorizedException('有効なユーザーではありません')
+      throw new UnauthorizedException(AuthErrorMessage.InvalidUser)
     }
     const session = await this.tokenService.findUniqueRefreshToken({
       where: { id_userId: { id: payload.sid, userId: payload.sub } },
     })
     if (!session) {
-      throw new UnauthorizedException('無効なセッションです')
+      throw new UnauthorizedException(AuthErrorMessage.InvalidSession)
     }
     /**
      * NOTE: 返値はContextに含まれる

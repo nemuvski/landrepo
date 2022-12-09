@@ -43,10 +43,13 @@ const HttpStatus = {
 } as const
 type HttpStatusType = keyof typeof HttpStatus
 
+type ErrorSourceType = 'gql' | 'others'
+
 export type ApiRouteErrorResponse = {
   statusCode: HttpStatusType
   statusName: string
-  errorMessage?: string
+  message?: string
+  source: ErrorSourceType
 }
 
 /**
@@ -55,20 +58,29 @@ export type ApiRouteErrorResponse = {
 export default class ApiRouteError extends Error {
   statusCode: HttpStatusType
   statusName: string
+  errorSource: ErrorSourceType
 
   constructor(statusCode: HttpStatusType, message?: string) {
+    let errorSource: ErrorSourceType = 'others'
+    if (message && message.match(/^\[graphql\]/i)) {
+      errorSource = 'gql'
+      message = message.replace(/^\[graphql\]/i, '').trim()
+    }
+
     super(message)
     this.name = this.constructor.name
 
     this.statusCode = HttpStatus[statusCode].code
     this.statusName = HttpStatus[statusCode].name
+    this.errorSource = errorSource
   }
 
   formatResponseBody(): ApiRouteErrorResponse {
     return {
       statusCode: this.statusCode,
       statusName: this.statusName,
-      errorMessage: this.message,
+      message: this.message,
+      source: this.errorSource,
     }
   }
 

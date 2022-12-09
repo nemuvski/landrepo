@@ -2,6 +2,6 @@ import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
 export class ClaimChangingPasswordInput {
-  @Field()
+  @Field(() => String)
   email: string
 }

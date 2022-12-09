@@ -98,7 +98,7 @@ export async function reissueApiRoute(req: NextApiRequest, res: NextApiResponse)
       )
       .toPromise()
     if (error || !data) {
-      throw new ApiRouteError(401)
+      throw new ApiRouteError(401, error?.message)
     } else {
       // クッキーに設定
       setCookie({ res }, COOKIE_NAME_ACCESS_TOKEN, data.reissueTokens.accessToken, {

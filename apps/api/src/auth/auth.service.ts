@@ -1,4 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
+import { AuthErrorMessage } from '@project/api-error'
 import { JwtOneTimePayloadUseField } from '@project/auth'
 import { UserRole, UserStatus, type User } from '@project/database'
 import { datetime } from '@project/datetime'
@@ -48,7 +49,7 @@ export class AuthService {
     const user = await this.usersService.findUnique({ where: { email } })
     // ユーザーレコードがあり、確認済みの場合は処理しない
     if (user && this.usersService.isActiveUser(user)) {
-      throw new ForbiddenException()
+      throw new ForbiddenException(AuthErrorMessage.InvalidUser)
     }
 
     let oneTimeToken: string
@@ -141,13 +142,13 @@ export class AuthService {
       where: { id_userId: { userId: user.id, id: sessionId } },
     })
     if (!authorizationValue || !targetRefreshToken) {
-      throw new UnauthorizedException()
+      throw new UnauthorizedException(AuthErrorMessage.InvalidSession)
     }
 
     const currentRefreshToken = getTokenByAuthorizationHeader(authorizationValue)
     const isMatched = compareHashedValueWithSHA256(currentRefreshToken, targetRefreshToken.token)
     if (!isMatched) {
-      throw new UnauthorizedException()
+      throw new UnauthorizedException(AuthErrorMessage.InvalidSession)
     }
 
     const newTokens = this.tokenService.getTokens(user, sessionId)
@@ -170,12 +171,12 @@ export class AuthService {
    */
   async verifyTokenAtSignUp(user: User, authorizationValue?: string): Promise<boolean> {
     if (!authorizationValue || !user.signUpConfirmationToken) {
-      throw new UnauthorizedException()
+      throw new UnauthorizedException(AuthErrorMessage.UserNonTargetSignUp)
     }
     const token = getTokenByAuthorizationHeader(authorizationValue)
     const isMatched = compareHashedValueWithSHA256(token, user.signUpConfirmationToken)
     if (!isMatched) {
-      throw new UnauthorizedException()
+      throw new UnauthorizedException(AuthErrorMessage.InvalidOneTimeToken)
     }
 
     await this.usersService.update({
@@ -200,7 +201,7 @@ export class AuthService {
     // 新しいメールアドレスが既にユーザーに利用されている場合はNG
     const newEmailUsingUser = await this.usersService.findUnique({ where: { email: newEmail } })
     if (newEmailUsingUser) {
-      throw new BadRequestException()
+      throw new BadRequestException(AuthErrorMessage.UserAlreadyExists)
     }
 
     const oneTimeToken = this.tokenService.getOneTimeToken(user, JwtOneTimePayloadUseField.ChangeEmail)
@@ -225,7 +226,7 @@ export class AuthService {
   async claimChangingPassword(email: string) {
     const user = await this.usersService.findUnique({ where: { email } })
     if (!user) {
-      throw new BadRequestException()
+      throw new BadRequestException(AuthErrorMessage.UserNotFound)
     }
     const oneTimeToken = this.tokenService.getOneTimeToken(user, JwtOneTimePayloadUseField.ChangePassword)
     await this.usersService.update({

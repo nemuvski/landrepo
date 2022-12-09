@@ -3,12 +3,12 @@ import { UserRole } from '@project/database'
 
 @InputType()
 export class SignUpUserInput {
-  @Field()
+  @Field(() => String)
   email: string
 
-  @Field()
+  @Field(() => String)
   password: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   role?: UserRole
 }

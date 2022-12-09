@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
+import { AuthErrorMessage } from '@project/api-error'
 import { JwtOneTimePayloadUseField, type JwtOneTimePayload } from '@project/auth'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import type { IPassportJwtStrategy } from '$/auth/interfaces/passport-strategy.interface'
@@ -22,11 +23,11 @@ export class JwtOneTimeStrategy
 
   async validate(payload: JwtOneTimePayload): Promise<JwtStrategyValidationReturnType<JwtOneTimePayload>> {
     if (!this.validUseField(payload)) {
-      throw new UnauthorizedException('無効なトークンです')
+      throw new UnauthorizedException(AuthErrorMessage.InvalidOneTimeToken)
     }
     const user = await this.usersService.findUnique({ where: { id: payload.sub } })
     if (!user) {
-      throw new UnauthorizedException('対象のユーザーが存在しません')
+      throw new UnauthorizedException(AuthErrorMessage.UserNotFound)
     }
 
     /**
@@ -35,7 +36,7 @@ export class JwtOneTimeStrategy
     if (payload.use === JwtOneTimePayloadUseField.SignUp) {
       // statusが確認されていない状態の場合のみ処理する
       if (!this.usersService.isNotConfirmedUser(user) || !user.signUpConfirmationToken) {
-        throw new UnauthorizedException('既に確認済みか、無効なユーザーです')
+        throw new UnauthorizedException(AuthErrorMessage.UserNonTargetSignUp)
       }
     }
 
@@ -44,7 +45,7 @@ export class JwtOneTimeStrategy
      */
     if (payload.use === JwtOneTimePayloadUseField.ChangeEmail) {
       if (!this.usersService.isActiveUser(user)) {
-        throw new UnauthorizedException('無効なユーザーです')
+        throw new UnauthorizedException(AuthErrorMessage.InvalidUser)
       }
     }
 

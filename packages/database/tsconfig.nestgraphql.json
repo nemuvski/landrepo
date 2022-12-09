@@ -3,6 +3,7 @@
   "exclude": ["scripts"],
   "compilerOptions": {
     "noEmit": false,
-    "emitDecoratorMetadata": false
+    "emitDecoratorMetadata": false,
+    "removeComments": false
   }
 }

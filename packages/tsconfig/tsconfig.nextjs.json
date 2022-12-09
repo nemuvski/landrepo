@@ -6,6 +6,7 @@
     "module": "esnext",
     "jsx": "preserve",
     "incremental": true,
-    "noEmit": true
+    "noEmit": true,
+    "removeComments": true
   }
 }

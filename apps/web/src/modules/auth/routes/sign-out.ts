@@ -79,9 +79,8 @@ export async function signOutApiRoute(req: NextApiRequest, res: NextApiResponse)
         {}
       )
       .toPromise()
-    // FIXME: 問題ないようなリクエストでも401になっている (バックエンド側の問題かもしれない)
     if (error) {
-      throw new ApiRouteError(401)
+      throw new ApiRouteError(401, error.message)
     }
 
     // アクセストークン関連のクッキーを破棄
