@@ -10,14 +10,15 @@ export class AccessLoggingInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<Request>()
-    const requestInfo = {
-      ip: request.ip,
-      method: request.method,
-      url: request.url,
-      body: request.body || {},
+    if (request) {
+      const requestInfo = {
+        ip: request.ip,
+        method: request.method,
+        url: request.url,
+        body: request.body || {},
+      }
+      this.appLoggerService.log(JSON.stringify(requestInfo))
     }
-
-    this.appLoggerService.log(JSON.stringify(requestInfo))
 
     return next.handle()
   }
