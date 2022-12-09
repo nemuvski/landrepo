@@ -1,5 +1,6 @@
 import { Box, Button, PasswordInput, Stack } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { MAX_LENGTH_PASSWORD } from '@project/auth'
 import { gql, useMutation } from 'urql'
 import { Form } from '~/components/Form'
 import { getGraphqlClientFetchOptions } from '~/modules/graphql'
@@ -18,6 +19,9 @@ const ChangePasswordForm: RC.WithoutChildren<{ oneTimeToken: string }> = ({ oneT
 
   const form = useForm<FormFieldValues>({
     initialValues: { newPassword: '' },
+    validate: {
+      newPassword: (value) => (value.length <= MAX_LENGTH_PASSWORD ? null : 'パスワードの最大文字数を超えています'),
+    },
   })
 
   return (

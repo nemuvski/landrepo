@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { MAX_LENGTH_PASSWORD } from '@project/auth'
 import { UserStatus } from '@project/database'
 import type Prisma from '$/prisma'
 import type { User } from '@project/database'
@@ -29,6 +30,17 @@ export class UsersService {
    */
   isActiveUser(user: User) {
     return user.status === UserStatus.ACTIVE
+  }
+
+  /**
+   * パスワードの有効条件を満たしている場合はTrueを返却
+   *
+   * ※ 新規登録時、パスワード変更時に利用
+   *
+   * @param plainTextPassword
+   */
+  isValidPasswordFormat(plainTextPassword: string) {
+    return 0 < plainTextPassword.length && plainTextPassword.length <= MAX_LENGTH_PASSWORD
   }
 
   /**

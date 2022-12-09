@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
-import { AuthErrorMessage } from '@project/api-error'
+import { AuthErrorMessage, UserErrorMessage } from '@project/api-error'
 import { JwtOneTimePayloadUseField } from '@project/auth'
 import { UserRole, UserStatus, type User } from '@project/database'
 import { datetime } from '@project/datetime'
@@ -46,6 +46,10 @@ export class AuthService {
    * @param role
    */
   async signUp(email: string, password: string, role: UserRole = UserRole.GENERAL): Promise<boolean> {
+    if (!this.usersService.isValidPasswordFormat(password)) {
+      throw new BadRequestException(UserErrorMessage.InvalidPasswordFormat)
+    }
+
     const user = await this.usersService.findUnique({ where: { email } })
     // ユーザーレコードがあり、確認済みの場合は処理しない
     if (user && this.usersService.isActiveUser(user)) {
@@ -296,6 +300,10 @@ export class AuthService {
    * @see {verifyTokenAtChangePassword()} resolverにて事前チェックしている
    */
   async changePassword(user: User, newPassword: string): Promise<boolean> {
+    if (!this.usersService.isValidPasswordFormat(newPassword)) {
+      throw new BadRequestException(UserErrorMessage.InvalidPasswordFormat)
+    }
+
     await this.usersService.update({
       data: {
         password: newPassword,

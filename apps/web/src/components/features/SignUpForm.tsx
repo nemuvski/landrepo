@@ -1,6 +1,7 @@
 import { regexpValidEmailAddressFormat } from '@itsumono/utils'
 import { Button, Box, Stack, TextInput, PasswordInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { MAX_LENGTH_PASSWORD } from '@project/auth'
 import { gql, useMutation } from 'urql'
 import { Form } from '~/components/Form'
 import type { RC } from '@itsumono/react'
@@ -22,6 +23,7 @@ const SignUpForm: RC.WithoutChildren = () => {
     validate: {
       email: (value) =>
         regexpValidEmailAddressFormat().test(value) ? null : 'メールアドレスの形式で入力してください。',
+      password: (value) => (value.length <= MAX_LENGTH_PASSWORD ? null : 'パスワードの最大文字数を超えています'),
     },
   })
 
