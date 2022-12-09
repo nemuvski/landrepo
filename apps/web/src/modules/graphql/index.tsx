@@ -1,7 +1,9 @@
 import { initUrqlClient } from 'next-urql'
+import { useMemo } from 'react'
 import { Provider } from 'urql'
 import { clientEnv } from '~/helpers/client-env.helper'
 import type { RC } from '@itsumono/react'
+import type { Session } from '~/modules/auth'
 
 export function graphqlClient(
   options: {
@@ -29,9 +31,10 @@ export function graphqlClient(
   return client
 }
 
-const client = graphqlClient()
-
-const GraphQLProvider: RC.WithChildren = ({ children }) => {
+const GraphQLProvider: RC.WithChildren<{ session?: Session | null }> = ({ session, children }) => {
+  const client = useMemo(() => {
+    return graphqlClient({ token: session?.accessToken })
+  }, [session])
   return <Provider value={client}>{children}</Provider>
 }
 

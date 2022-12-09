@@ -35,7 +35,7 @@ const MyApp = ({ Component, pageProps: { session, ...pageProps } }: AppPropsWith
         }}
       />
 
-      <GraphQLProvider>
+      <GraphQLProvider session={session}>
         <UIProvider>
           <Component {...pageProps} />
         </UIProvider>
