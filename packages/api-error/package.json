@@ -10,8 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@project/tsconfig": "*",
-    "typescript": "^4.9.4"
+    "@project/tsconfig": "*"
   },
   "tsup": {
     "entry": [

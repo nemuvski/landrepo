@@ -14,8 +14,7 @@
     "jwt-decode": "^3.1.2"
   },
   "devDependencies": {
-    "@project/tsconfig": "*",
-    "typescript": "^4.9.4"
+    "@project/tsconfig": "*"
   },
   "tsup": {
     "entry": [
