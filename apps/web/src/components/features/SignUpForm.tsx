@@ -1,7 +1,6 @@
 import { regexpValidEmailAddressFormat } from '@itsumono/utils'
 import { Button, Box, Stack, TextInput, PasswordInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { useEffect } from 'react'
 import { gql, useMutation } from 'urql'
 import { Form } from '~/components/Form'
 import type { RC } from '@itsumono/react'
@@ -12,7 +11,7 @@ type FormFieldValues = {
 }
 
 const SignUpForm: RC.WithoutChildren = () => {
-  const [{ error, fetching }, signUp] = useMutation<boolean, { email: string; password: string }>(gql`
+  const [{ fetching }, signUp] = useMutation<{ signUp: boolean }, { email: string; password: string }>(gql`
     mutation ($email: String!, $password: String!) {
       signUp(input: { email: $email, password: $password })
     }
@@ -26,16 +25,14 @@ const SignUpForm: RC.WithoutChildren = () => {
     },
   })
 
-  useEffect(() => {
-    if (error) {
-      console.error(error)
-    }
-  }, [error])
-
   return (
     <Form
       onSubmit={form.onSubmit((values) => {
-        signUp({ email: values.email, password: values.password })
+        signUp({ email: values.email, password: values.password }).then((v) => {
+          if (v.error) {
+            console.error(v.error)
+          }
+        })
       })}
     >
       <Stack spacing='lg'>
@@ -47,12 +44,7 @@ const SignUpForm: RC.WithoutChildren = () => {
           autoComplete='email'
           {...form.getInputProps('email')}
         />
-        <PasswordInput
-          required
-          label='パスワード'
-          autoComplete='current-password'
-          {...form.getInputProps('password')}
-        />
+        <PasswordInput required label='パスワード' autoComplete='new-password' {...form.getInputProps('password')} />
 
         <Box sx={{ textAlign: 'center' }}>
           <Button type='submit' loading={fetching}>

@@ -1,6 +1,7 @@
 import { regexpValidEmailAddressFormat } from '@itsumono/utils'
 import { Button, Box, Stack, TextInput, PasswordInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import Router from 'next/router'
 import { useEffect } from 'react'
 import { Form } from '~/components/Form'
 import { useSignInHandler } from '~/modules/auth/routes/sign-in'
@@ -31,7 +32,9 @@ const SignInForm: RC.WithoutChildren = () => {
   return (
     <Form
       onSubmit={form.onSubmit((values) => {
-        signIn({ email: values.email, password: values.password })
+        signIn({ email: values.email, password: values.password }).then(() => {
+          Router.replace('/')
+        })
       })}
     >
       <Stack spacing='lg'>

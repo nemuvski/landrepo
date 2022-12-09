@@ -1,6 +1,7 @@
 import { UseGuards } from '@nestjs/common'
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 import { AuthService } from '$/auth/auth.service'
+import { ChangePasswordInput } from '$/auth/dto/change-password.input'
 import { ClaimChangingOwnEmailInput } from '$/auth/dto/claim-changing-email.input'
 import { ClaimChangingPasswordInput } from '$/auth/dto/claim-changing-password.input'
 import { SignInUserInput } from '$/auth/dto/sign-in-user.input'
@@ -82,7 +83,35 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(JwtOneTimeGuard)
+  async verifyTokenAtChangeEmail(@Context() context: WithJwtOneTimeGuardContext) {
+    const { user } = context.req.user
+    const authorizationValue = context.req.headers.authorization
+    return this.authService.verifyTokenAtChangeEmail(user, authorizationValue)
+  }
+
+  @Mutation(() => Boolean)
   async claimChangingPassword(@Args('input') input: ClaimChangingPasswordInput) {
     return this.authService.claimChangingPassword(input.email)
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(JwtOneTimeGuard)
+  async verifyTokenAtChangePassword(@Context() context: WithJwtOneTimeGuardContext) {
+    const { user } = context.req.user
+    const authorizationValue = context.req.headers.authorization
+    return this.authService.verifyTokenAtChangePassword(user, authorizationValue)
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(JwtOneTimeGuard)
+  async changePassword(@Args('input') input: ChangePasswordInput, @Context() context: WithJwtOneTimeGuardContext) {
+    const { user } = context.req.user
+    const authorizationValue = context.req.headers.authorization
+    const isValid = await this.authService.verifyTokenAtChangePassword(user, authorizationValue)
+    if (isValid) {
+      await this.authService.changePassword(user, input.newPassword)
+    }
+    return true
   }
 }

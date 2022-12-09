@@ -207,9 +207,9 @@ export class AuthService {
     const oneTimeToken = this.tokenService.getOneTimeToken(user, JwtOneTimePayloadUseField.ChangeEmail)
     await this.usersService.update({
       data: {
+        changeEmail: { set: newEmail },
         changeEmailCompletedAt: { set: null },
         changeEmailToken: { set: oneTimeToken },
-        changeEmail: { set: newEmail },
         changeEmailSentAt: { set: datetime().toISOString() },
       },
       where: { id: user.id },
@@ -219,11 +219,40 @@ export class AuthService {
   }
 
   /**
+   * パスワード変更時の確認メール中のトークンを検証し、あっていれば新しいメールアドレスを設定する
+   *
+   * @param user
+   * @param authorizationValue
+   */
+  async verifyTokenAtChangeEmail(user: User, authorizationValue?: string): Promise<boolean> {
+    if (!authorizationValue || !user.changeEmailToken || !user.changeEmail) {
+      throw new UnauthorizedException(AuthErrorMessage.UserNonTargetChangingEmail)
+    }
+    const token = getTokenByAuthorizationHeader(authorizationValue)
+    const isMatched = compareHashedValueWithSHA256(token, user.changeEmailToken)
+    if (!isMatched) {
+      throw new UnauthorizedException(AuthErrorMessage.InvalidOneTimeToken)
+    }
+
+    await this.usersService.update({
+      data: {
+        email: { set: user.changeEmail },
+        changeEmail: { set: null },
+        changeEmailCompletedAt: { set: datetime().toISOString() },
+        changeEmailToken: { set: null },
+        changeEmailSentAt: { set: null },
+      },
+      where: { id: user.id },
+    })
+    return true
+  }
+
+  /**
    * パスワード変更のメールを送信する
    *
    * @param email
    */
-  async claimChangingPassword(email: string) {
+  async claimChangingPassword(email: string): Promise<boolean> {
     const user = await this.usersService.findUnique({ where: { email } })
     if (!user) {
       throw new BadRequestException(AuthErrorMessage.UserNotFound)
@@ -238,6 +267,44 @@ export class AuthService {
       where: { id: user.id },
     })
     await this.mailService.sendChangePassword(email, { token: oneTimeToken })
+    return true
+  }
+
+  /**
+   * パスワード変更時の確認メール中のトークンを検証
+   *
+   * @param user
+   * @param authorizationValue
+   */
+  async verifyTokenAtChangePassword(user: User, authorizationValue?: string): Promise<boolean> {
+    if (!authorizationValue || !user.changePasswordToken) {
+      throw new UnauthorizedException(AuthErrorMessage.UserNonTargetChangingPassword)
+    }
+    const token = getTokenByAuthorizationHeader(authorizationValue)
+    const isMatched = compareHashedValueWithSHA256(token, user.changePasswordToken)
+    if (!isMatched) {
+      throw new UnauthorizedException(AuthErrorMessage.InvalidOneTimeToken)
+    }
+    return true
+  }
+
+  /**
+   * ユーザーのメールアドレスを変更する
+   *
+   * @param user
+   * @param newPassword
+   * @see {verifyTokenAtChangePassword()} resolverにて事前チェックしている
+   */
+  async changePassword(user: User, newPassword: string): Promise<boolean> {
+    await this.usersService.update({
+      data: {
+        password: newPassword,
+        changePasswordCompletedAt: { set: datetime().toISOString() },
+        changePasswordToken: { set: null },
+        changePasswordSentAt: { set: null },
+      },
+      where: { id: user.id },
+    })
     return true
   }
 }

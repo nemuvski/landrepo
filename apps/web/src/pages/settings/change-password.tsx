@@ -1,21 +1,20 @@
 import { Card } from '@mantine/core'
-import SignUpForm from '~/components/features/SignUpForm'
+import ClaimChangingPasswordForm from '~/components/features/ClaimChangingPasswordForm'
 import ContentFirstLayout from '~/components/layouts/ContentFirstLayout'
 import Meta from '~/components/Meta'
+import { useSession } from '~/modules/auth'
 import withSession from '~/modules/auth/middlewares/with-session'
-import { InBoundButtonLink } from '~/modules/ui/Link'
 import type { NextPage } from 'next'
 
-const SignInPage: NextPage = () => {
+const SettingsChangePasswordPage: NextPage = () => {
+  const session = useSession()
+
   return (
     <ContentFirstLayout>
-      <Meta pageName='サインアップ' />
+      <Meta pageName='パスワード変更' />
 
       <Card radius='md' shadow='sm' withBorder>
-        <SignUpForm />
-        <InBoundButtonLink href='/sign-up' color='green'>
-          サインインする
-        </InBoundButtonLink>
+        <ClaimChangingPasswordForm currentEmail={session?.user.email} />
       </Card>
     </ContentFirstLayout>
   )
@@ -23,9 +22,9 @@ const SignInPage: NextPage = () => {
 
 export const getServerSideProps = withSession({
   routeGuard: {
-    acceptRule: false,
-    fallback: { redirect: { destination: '/', permanent: false } },
+    acceptRule: true,
+    fallback: { notFound: true },
   },
 })
 
-export default SignInPage
+export default SettingsChangePasswordPage

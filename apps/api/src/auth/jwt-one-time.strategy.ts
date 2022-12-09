@@ -44,8 +44,17 @@ export class JwtOneTimeStrategy
      * ChangeEmail用途の場合
      */
     if (payload.use === JwtOneTimePayloadUseField.ChangeEmail) {
-      if (!this.usersService.isActiveUser(user)) {
-        throw new UnauthorizedException(AuthErrorMessage.InvalidUser)
+      if (!this.usersService.isActiveUser(user) || !user.changeEmailToken || !user.changeEmail) {
+        throw new UnauthorizedException(AuthErrorMessage.UserNonTargetChangingEmail)
+      }
+    }
+
+    /**
+     * ChangePassword用途の場合
+     */
+    if (payload.use === JwtOneTimePayloadUseField.ChangePassword) {
+      if (!this.usersService.isActiveUser(user) || !user.changePasswordToken) {
+        throw new UnauthorizedException(AuthErrorMessage.UserNonTargetChangingPassword)
       }
     }
 
@@ -60,6 +69,10 @@ export class JwtOneTimeStrategy
 
   private validUseField(payload: JwtOneTimePayload) {
     const { use } = payload
-    return use === JwtOneTimePayloadUseField.SignUp || use === JwtOneTimePayloadUseField.ChangeEmail
+    return (
+      use === JwtOneTimePayloadUseField.SignUp ||
+      use === JwtOneTimePayloadUseField.ChangeEmail ||
+      use === JwtOneTimePayloadUseField.ChangePassword
+    )
   }
 }

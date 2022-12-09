@@ -20,6 +20,14 @@ export const AuthErrorMessage = {
    */
   UserNonTargetSignUp: 'user non target sign up',
   /**
+   * メールアドレス変更対象のユーザーではない
+   */
+  UserNonTargetChangingEmail: 'user non target changing email',
+  /**
+   * パスワード変更対象のユーザーではない
+   */
+  UserNonTargetChangingPassword: 'user non target changing password',
+  /**
    * 無効なユーザー
    *
    * ※ ユーザーのステータスが有効でない

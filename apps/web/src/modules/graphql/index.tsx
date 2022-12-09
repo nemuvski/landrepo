@@ -5,6 +5,14 @@ import { clientEnv } from '~/helpers/client-env.helper'
 import type { RC } from '@itsumono/react'
 import type { Session } from '~/modules/auth'
 
+export function getGraphqlClientFetchOptions(token?: string | null): RequestInit {
+  const headers: RequestInit['headers'] = {}
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
+  return { headers }
+}
+
 export function graphqlClient(
   options: {
     token?: string
@@ -15,13 +23,7 @@ export function graphqlClient(
   const client = initUrqlClient(
     {
       url: clientEnv.NEXT_PUBLIC_API_GRAPHQL_ENDPOINT,
-      fetchOptions: () => {
-        const headers: RequestInit['headers'] = {}
-        if (token) {
-          headers['Authorization'] = `Bearer ${token}`
-        }
-        return { headers }
-      },
+      fetchOptions: () => getGraphqlClientFetchOptions(token),
     },
     enableSuspense
   )

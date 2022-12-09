@@ -4,7 +4,6 @@ import { Card } from '@mantine/core'
 import { PARAM_NAME_TOKEN } from '@project/auth'
 import { gql } from 'urql'
 import ContentFirstLayout from '~/components/layouts/ContentFirstLayout'
-import Meta from '~/components/Meta'
 import withSession from '~/modules/auth/middlewares/with-session'
 import { graphqlClient } from '~/modules/graphql'
 import { InBoundButtonLink } from '~/modules/ui/Link'
@@ -17,8 +16,6 @@ type ServerSideResult = {
 const GuideSignUpConfirmationPage: NextPage<ServerSideResult> = ({ isValidToken }) => {
   return (
     <ContentFirstLayout>
-      <Meta nofollow noindex />
-
       <Card radius='md' shadow='sm' withBorder>
         <Either
           test={isValidToken}
@@ -45,13 +42,12 @@ const GuideSignUpConfirmationPage: NextPage<ServerSideResult> = ({ isValidToken 
 }
 
 export const getServerSideProps = withSession<ServerSideResult>({
-  getServerSideProps: async (context, session) => {
+  routeGuard: {
+    acceptRule: false,
+    fallback: { notFound: true },
+  },
+  getServerSideProps: async (context, _session) => {
     try {
-      // セッションが貼られてる場合は404とする
-      if (session) {
-        return { notFound: true }
-      }
-
       const token = context.query[PARAM_NAME_TOKEN]
       if (!isString(token) || !token) {
         return { notFound: true }
@@ -69,7 +65,7 @@ export const getServerSideProps = withSession<ServerSideResult>({
         .toPromise()
 
       if (error) {
-        throw new Error('無効なトークンです')
+        throw new Error(error.message)
       }
       return { props: { isValidToken: true } }
     } catch (error) {

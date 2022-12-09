@@ -1,4 +1,4 @@
-import { Card } from '@mantine/core'
+import { Card, Stack } from '@mantine/core'
 import ContentFirstLayout from '~/components/layouts/ContentFirstLayout'
 import Meta from '~/components/Meta'
 import withSession from '~/modules/auth/middlewares/with-session'
@@ -11,9 +11,13 @@ const Home: NextPage = () => {
       <Meta pageName='ホーム' />
 
       <Card radius='md' shadow='sm' withBorder>
-        ログインしている
-        <br />
-        <InBoundButtonLink href='/sign-out'>サインアウト</InBoundButtonLink>
+        <Stack spacing='lg'>
+          <InBoundButtonLink href='/settings/change-email'>メールアドレス変更</InBoundButtonLink>
+          <InBoundButtonLink href='/settings/change-password'>パスワード変更</InBoundButtonLink>
+          <InBoundButtonLink href='/sign-out' color='gray'>
+            サインアウト
+          </InBoundButtonLink>
+        </Stack>
       </Card>
     </ContentFirstLayout>
   )

@@ -2,6 +2,10 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input ChangePasswordInput {
+  newPassword: String!
+}
+
 input ClaimChangingOwnEmailInput {
   newEmail: String!
 }
@@ -11,6 +15,7 @@ input ClaimChangingPasswordInput {
 }
 
 type Mutation {
+  changePassword(input: ChangePasswordInput!): Boolean!
   claimChangingOwnEmail(input: ClaimChangingOwnEmailInput!): Boolean!
   claimChangingPassword(input: ClaimChangingPasswordInput!): Boolean!
   reissueTokens: SignInUserResponse!
@@ -18,6 +23,8 @@ type Mutation {
   signOut: Boolean!
   signUp(input: SignUpUserInput!): Boolean!
   verifySession: VerifySessionResponse!
+  verifyTokenAtChangeEmail: Boolean!
+  verifyTokenAtChangePassword: Boolean!
   verifyTokenAtSignUp: Boolean!
 }
 
