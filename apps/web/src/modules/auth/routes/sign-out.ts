@@ -1,3 +1,5 @@
+import { trimGqlPrefixErrorMessage } from '@project/api-error'
+import { AxiosError } from 'axios/index'
 import { destroyCookie, parseCookies } from 'nookies'
 import { useEffect, useRef, useState } from 'react'
 import { gql } from 'urql'
@@ -38,7 +40,11 @@ export function useSignOutHandler(): [() => Promise<void>, { loading: boolean }]
       )
       updater(null)
     } catch (error) {
-      throw error
+      console.error(error)
+      if (error instanceof AxiosError) {
+        // @ts-ignore: statusはエラーコードが入る
+        throw new ApiRouteError(error.response.status, error.response?.data.message)
+      }
     } finally {
       setLoading(false)
     }
@@ -75,7 +81,7 @@ export async function signOutApiRoute(req: NextApiRequest, res: NextApiResponse)
       )
       .toPromise()
     if (error) {
-      throw new ApiRouteError(401, error.message)
+      throw new ApiRouteError(401, trimGqlPrefixErrorMessage(error))
     }
 
     // アクセストークン関連のクッキーを破棄

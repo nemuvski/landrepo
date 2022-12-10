@@ -1,4 +1,6 @@
+import { trimGqlPrefixErrorMessage } from '@project/api-error'
 import { datetime } from '@project/datetime'
+import { AxiosError } from 'axios'
 import { parseCookies, setCookie } from 'nookies'
 import { useEffect, useRef, useState } from 'react'
 import { gql } from 'urql'
@@ -45,8 +47,12 @@ export function useSignInHandler(): [(input: SignInMutationInput) => Promise<voi
       )
       updater(response.data)
     } catch (error) {
+      console.error(error)
       updater(null)
-      throw error
+      if (error instanceof AxiosError) {
+        // @ts-ignore: statusはエラーコードが入る
+        throw new ApiRouteError(error.response.status, error.response?.data.message)
+      }
     } finally {
       setLoading(false)
     }
@@ -100,7 +106,7 @@ export async function signInApiRoute(req: NextApiRequest, res: NextApiResponse) 
       )
       .toPromise()
     if (error || !data) {
-      throw new ApiRouteError(401, error?.message)
+      throw new ApiRouteError(401, trimGqlPrefixErrorMessage(error))
     } else {
       // クッキーに設定
       setCookie({ res }, COOKIE_NAME_ACCESS_TOKEN, data.signIn.accessToken, {
