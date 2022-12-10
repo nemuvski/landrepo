@@ -2,7 +2,7 @@ import { datetime } from '@project/datetime'
 import { NextResponse } from 'next/server'
 import { gql } from 'urql'
 import { COOKIE_NAME_ACCESS_TOKEN, COOKIE_NAME_REFRESH_TOKEN } from '~/modules/auth/constants'
-import { mustReissueToken } from '~/modules/auth/utils'
+import { isNecessaryToReissueToken } from '~/modules/auth/utils'
 import { defaultCookieOptions } from '~/modules/cookie'
 import { graphqlClient } from '~/modules/graphql'
 import type { Tokens } from '@project/auth'
@@ -83,7 +83,7 @@ async function rotateTokenHandler(req: NextRequest): Promise<Tokens | null> {
   if (accessToken && refreshToken) {
     const expiresIn = await verifySession(accessToken)
     // アクセストークンの期限が近づいている場合は再発行
-    if (mustReissueToken(expiresIn)) {
+    if (isNecessaryToReissueToken(expiresIn)) {
       return reissueTokens(refreshToken)
     }
     return null

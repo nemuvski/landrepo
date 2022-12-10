@@ -2,7 +2,7 @@ import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect } from 'react'
 import { CHECK_VALID_TOKEN_INTERVAL } from '~/modules/auth/constants'
 import { useReissueTokenHandler } from '~/modules/auth/routes/reissue'
-import { mustReissueToken } from '~/modules/auth/utils'
+import { isNecessaryToReissueToken } from '~/modules/auth/utils'
 import { JotaiDebugTool, JotaiProvider } from '~/modules/jotai'
 import type { RC } from '@itsumono/react'
 import type { AppProps } from 'next/app'
@@ -66,7 +66,7 @@ const ValidTokenObserver = () => {
       if (session) {
         console.debug('[Session]', session)
         const timer = setInterval(() => {
-          if (mustReissueToken(session.accessTokenExpiresIn)) {
+          if (isNecessaryToReissueToken(session.accessTokenExpiresIn)) {
             reissueToken()
           }
         }, CHECK_VALID_TOKEN_INTERVAL)

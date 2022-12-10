@@ -9,7 +9,7 @@ import type { Session } from '~/modules/auth/index'
  *
  * @param isoDateString
  */
-export function mustReissueToken(isoDateString: string) {
+export function isNecessaryToReissueToken(isoDateString: string) {
   return datetime(isoDateString).diff(datetime(), 'ms') <= EXPIRY_MARGIN
 }
 
