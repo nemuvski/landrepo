@@ -17,7 +17,7 @@ export const COOKIE_NAME_REFRESH_TOKEN = '__app-ref-tkn' as const
  *
  * @see {import('@project/auth').JWT_TOKEN_EXPIRES_IN} 設定する時間はトークンの有効期限よりも短くすること
  */
-export const CHECK_VALID_TOKEN_INTERVAL = 20000 as const
+export const CHECK_VALID_TOKEN_INTERVAL = 10000 as const
 
 /**
  * トークン再発行が必要かのチェックする際のマージン[ms]
