@@ -15,6 +15,15 @@ export class UsersService {
   constructor(private databaseService: DatabaseService) {}
 
   /**
+   * ユーザーが削除予定である場合はTrueを返却
+   *
+   * @param user
+   */
+  isDeletingUser(user: User) {
+    return user.status === UserStatus.INACTIVE
+  }
+
+  /**
    * メールが未確認状態のユーザーである場合はTrueを返却
    *
    * @param user
@@ -83,6 +92,17 @@ export class UsersService {
    */
   async findUnique(args: Prisma.UserFindUniqueArgs) {
     return this.databaseService.user.findUnique(args)
+  }
+
+  /**
+   * Userテーブルからレコードを任意条件で最初の1件取得
+   *
+   * ※ uniqueフィールドを条件に与えることで一意な検索ができる
+   *
+   * @param args
+   */
+  async findFirst(args: Prisma.UserFindFirstArgs) {
+    return this.databaseService.user.findFirst(args)
   }
 
   /**

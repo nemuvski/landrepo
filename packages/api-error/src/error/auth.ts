@@ -28,6 +28,10 @@ export const AuthErrorMessage = {
    */
   UserNonTargetChangingPassword: 'user non target changing password',
   /**
+   * 新規登録時入力したメールアドレスが削除予定のユーザーが利用しているもの
+   */
+  EmailAddressCurrentlyUnavailable: 'Email address currently unavailable',
+  /**
    * 無効なユーザー
    *
    * ※ ユーザーのステータスが有効でない

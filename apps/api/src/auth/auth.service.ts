@@ -28,14 +28,14 @@ export class AuthService {
    * @param password 平文のパスワード
    */
   async validateUser(email: string, password: string) {
-    const user = await this.usersService.findUnique({ where: { email } })
+    const user = await this.usersService.findFirst({ where: { email, status: UserStatus.ACTIVE } })
     if (user) {
       const isMatched = await compareHashedValueWithBcrypt(password, user.password)
       if (isMatched) {
         return user
       }
     }
-    // ユーザーが存在しない、またはパスワードが合わない場合はnullを返却
+    // ログイン可能なユーザーが存在しない、またはパスワードが合わない場合はnullを返却
     return null
   }
 
@@ -52,8 +52,14 @@ export class AuthService {
     }
 
     const user = await this.usersService.findUnique({ where: { email } })
-    if (user && this.usersService.isActiveUser(user)) {
-      throw new ForbiddenException(AuthErrorMessage.InvalidUser)
+    if (user) {
+      if (this.usersService.isDeletingUser(user)) {
+        throw new ForbiddenException(AuthErrorMessage.EmailAddressCurrentlyUnavailable)
+      }
+      // NOTE: NotConfirmedステータスの場合は再度確認メールを送信できるようにしたいため除外しない
+      if (!this.usersService.isNotConfirmedUser(user)) {
+        throw new ForbiddenException(AuthErrorMessage.UserAlreadyExists)
+      }
     }
 
     let oneTimeToken: string

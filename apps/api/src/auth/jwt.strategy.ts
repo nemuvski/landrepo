@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
 import { AuthErrorMessage } from '@project/api-error'
+import { UserStatus } from '@project/database'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import type { IPassportJwtStrategy } from '$/auth/interfaces/passport-strategy.interface'
 import type { JwtStrategyValidateReturnType } from '$/auth/types/strategy.type'
@@ -24,12 +25,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') implements IP
   }
 
   async validate(payload: JwtPayload): Promise<JwtStrategyValidateReturnType> {
-    const user = await this.usersService.findUnique({ where: { id: payload.sub } })
+    const user = await this.usersService.findFirst({ where: { id: payload.sub, status: UserStatus.ACTIVE } })
     if (!user) {
       throw new UnauthorizedException(AuthErrorMessage.UserNotFound)
-    }
-    if (!this.usersService.isActiveUser(user)) {
-      throw new UnauthorizedException(AuthErrorMessage.InvalidUser)
     }
     const session = await this.tokenService.findUniqueRefreshToken({
       where: { id_userId: { id: payload.sid, userId: payload.sub } },
