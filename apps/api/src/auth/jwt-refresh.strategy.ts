@@ -4,7 +4,7 @@ import { PassportStrategy } from '@nestjs/passport'
 import { AuthErrorMessage } from '@project/api-error'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import type { IPassportJwtStrategy } from '$/auth/interfaces/passport-strategy.interface'
-import type { JwtStrategyValidationReturnType } from '$/auth/types/strategy.type'
+import type { JwtStrategyValidateReturnType } from '$/auth/types/strategy.type'
 import type { JwtPayload } from '@project/auth'
 import { TokenService } from '$/auth/token.service'
 import { UsersService } from '$/users/users.service'
@@ -23,7 +23,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
     })
   }
 
-  async validate(payload: JwtPayload): Promise<JwtStrategyValidationReturnType> {
+  async validate(payload: JwtPayload): Promise<JwtStrategyValidateReturnType> {
     const user = await this.usersService.findUnique({ where: { id: payload.sub } })
     if (!user) {
       throw new UnauthorizedException(AuthErrorMessage.UserNotFound)
@@ -44,6 +44,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
     return {
       ...payload,
       user,
+      refreshToken: session,
     }
   }
 }

@@ -13,7 +13,7 @@ const SignInPage: NextPage = () => {
 
       <Card radius='md' shadow='sm' withBorder>
         <SignUpForm />
-        <InBoundButtonLink href='/sign-up' color='green'>
+        <InBoundButtonLink href='/sign-in' color='green'>
           サインインする
         </InBoundButtonLink>
       </Card>

@@ -33,6 +33,39 @@ export class UsersService {
   }
 
   /**
+   * 新規登録フローの対象となるユーザーである場合はTrueを返却
+   *
+   * ※ トークンチェックはここではしない
+   *
+   * @param user
+   */
+  isTargetSignUpConfirmation(user: User) {
+    return this.isNotConfirmedUser(user) && user.signUpConfirmationToken
+  }
+
+  /**
+   * メールアドレス変更フローの対象となるユーザーである場合はTrueを返却
+   *
+   * ※ トークンチェックはここではしない
+   *
+   * @param user
+   */
+  isTargetChangingEmailConfirmation(user: User) {
+    return this.isActiveUser(user) && user.changeEmailToken && user.changeEmail
+  }
+
+  /**
+   * パスワード変更フローの対象となるユーザーである場合はTrueを返却
+   *
+   * ※ トークンチェックはここではしない
+   *
+   * @param user
+   */
+  isTargetChangingPasswordConfirmation(user: User) {
+    return this.isActiveUser(user) && user.changePasswordToken
+  }
+
+  /**
    * パスワードの有効条件を満たしている場合はTrueを返却
    *
    * ※ 新規登録時、パスワード変更時に利用

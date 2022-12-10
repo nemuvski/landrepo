@@ -5,7 +5,7 @@ import { AuthErrorMessage } from '@project/api-error'
 import { JwtOneTimePayloadUseField, type JwtOneTimePayload } from '@project/auth'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import type { IPassportJwtStrategy } from '$/auth/interfaces/passport-strategy.interface'
-import type { JwtStrategyValidationReturnType } from '$/auth/types/strategy.type'
+import type { JwtOneTimeStrategyValidateReturnType } from '$/auth/types/strategy.type'
 import { UsersService } from '$/users/users.service'
 
 @Injectable()
@@ -21,7 +21,7 @@ export class JwtOneTimeStrategy
     })
   }
 
-  async validate(payload: JwtOneTimePayload): Promise<JwtStrategyValidationReturnType<JwtOneTimePayload>> {
+  async validate(payload: JwtOneTimePayload): Promise<JwtOneTimeStrategyValidateReturnType> {
     if (!this.validUseField(payload)) {
       throw new UnauthorizedException(AuthErrorMessage.InvalidOneTimeToken)
     }
@@ -34,8 +34,7 @@ export class JwtOneTimeStrategy
      * SignUp用途の場合
      */
     if (payload.use === JwtOneTimePayloadUseField.SignUp) {
-      // statusが確認されていない状態の場合のみ処理する
-      if (!this.usersService.isNotConfirmedUser(user) || !user.signUpConfirmationToken) {
+      if (!this.usersService.isTargetSignUpConfirmation(user)) {
         throw new UnauthorizedException(AuthErrorMessage.UserNonTargetSignUp)
       }
     }
@@ -44,7 +43,7 @@ export class JwtOneTimeStrategy
      * ChangeEmail用途の場合
      */
     if (payload.use === JwtOneTimePayloadUseField.ChangeEmail) {
-      if (!this.usersService.isActiveUser(user) || !user.changeEmailToken || !user.changeEmail) {
+      if (!this.usersService.isTargetChangingEmailConfirmation(user)) {
         throw new UnauthorizedException(AuthErrorMessage.UserNonTargetChangingEmail)
       }
     }
@@ -53,7 +52,7 @@ export class JwtOneTimeStrategy
      * ChangePassword用途の場合
      */
     if (payload.use === JwtOneTimePayloadUseField.ChangePassword) {
-      if (!this.usersService.isActiveUser(user) || !user.changePasswordToken) {
+      if (!this.usersService.isTargetChangingPasswordConfirmation(user)) {
         throw new UnauthorizedException(AuthErrorMessage.UserNonTargetChangingPassword)
       }
     }

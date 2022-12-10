@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
 import { AuthErrorMessage, UserErrorMessage } from '@project/api-error'
 import { JwtOneTimePayloadUseField } from '@project/auth'
-import { UserRole, UserStatus, type User } from '@project/database'
+import { UserRole, UserStatus, type User, type RefreshToken } from '@project/database'
 import { datetime } from '@project/datetime'
 import type { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
 import type { VerifySessionResponse } from '$/auth/dto/verify-session.response'
@@ -51,7 +51,6 @@ export class AuthService {
     }
 
     const user = await this.usersService.findUnique({ where: { email } })
-    // ユーザーレコードがあり、確認済みの場合は処理しない
     if (user && this.usersService.isActiveUser(user)) {
       throw new ForbiddenException(AuthErrorMessage.InvalidUser)
     }
@@ -137,30 +136,20 @@ export class AuthService {
    * トークンの再発行（リフレッシュトークン）
    *
    * @param user Userエンティティ
-   * @param sessionId
+   * @param refreshToken RefreshTokenエンティティ
    * @param authorizationValue 'Bearer XXX.YYY.ZZZ' といった形式の内容
    */
-  async reissueTokens(user: User, sessionId: string, authorizationValue?: string): Promise<SignInUserResponse> {
-    // NOTE: expiresInカラムの内容も条件(where)に含めた方が良いが、事前にUseGuardsで弾かれるため省略している
-    const targetRefreshToken = await this.tokenService.findUniqueRefreshToken({
-      where: { id_userId: { userId: user.id, id: sessionId } },
-    })
-    if (!authorizationValue || !targetRefreshToken) {
-      throw new UnauthorizedException(AuthErrorMessage.InvalidSession)
-    }
-
+  async reissueTokens(user: User, refreshToken: RefreshToken, authorizationValue: string): Promise<SignInUserResponse> {
     const currentRefreshToken = getTokenByAuthorizationHeader(authorizationValue)
-    const isMatched = compareHashedValueWithSHA256(currentRefreshToken, targetRefreshToken.token)
+    const isMatched = compareHashedValueWithSHA256(currentRefreshToken, refreshToken.token)
     if (!isMatched) {
       throw new UnauthorizedException(AuthErrorMessage.InvalidSession)
     }
-
-    const newTokens = this.tokenService.getTokens(user, sessionId)
+    const newTokens = this.tokenService.getTokens(user, refreshToken.id)
     await this.tokenService.updateRefreshToken({
       data: { token: { set: newTokens.refreshToken }, expiresIn: { set: newTokens.refreshTokenExpiresIn } },
-      where: { id_userId: { userId: user.id, id: sessionId } },
+      where: { id_userId: { userId: user.id, id: refreshToken.id } },
     })
-
     return {
       ...newTokens,
       user,
@@ -207,7 +196,6 @@ export class AuthService {
     if (newEmailUsingUser) {
       throw new BadRequestException(AuthErrorMessage.UserAlreadyExists)
     }
-
     const oneTimeToken = this.tokenService.getOneTimeToken(user, JwtOneTimePayloadUseField.ChangeEmail)
     await this.usersService.update({
       data: {
@@ -228,19 +216,16 @@ export class AuthService {
    * @param user
    * @param authorizationValue
    */
-  async verifyTokenAtChangeEmail(user: User, authorizationValue?: string): Promise<boolean> {
-    if (!authorizationValue || !user.changeEmailToken || !user.changeEmail) {
-      throw new UnauthorizedException(AuthErrorMessage.UserNonTargetChangingEmail)
-    }
+  async verifyTokenAtChangeEmail(user: User, authorizationValue: string): Promise<boolean> {
     const token = getTokenByAuthorizationHeader(authorizationValue)
     const isMatched = compareHashedValueWithSHA256(token, user.changeEmailToken)
     if (!isMatched) {
       throw new UnauthorizedException(AuthErrorMessage.InvalidOneTimeToken)
     }
-
     await this.usersService.update({
       data: {
-        email: { set: user.changeEmail },
+        // NOTE: Guardで事前にあることはチェック済みなので、typeエラー回避
+        email: { set: user.changeEmail ?? '' },
         changeEmail: { set: null },
         changeEmailCompletedAt: { set: datetime().toISOString() },
         changeEmailToken: { set: null },
@@ -280,10 +265,7 @@ export class AuthService {
    * @param user
    * @param authorizationValue
    */
-  async verifyTokenAtChangePassword(user: User, authorizationValue?: string): Promise<boolean> {
-    if (!authorizationValue || !user.changePasswordToken) {
-      throw new UnauthorizedException(AuthErrorMessage.UserNonTargetChangingPassword)
-    }
+  async verifyTokenAtChangePassword(user: User, authorizationValue: string): Promise<boolean> {
     const token = getTokenByAuthorizationHeader(authorizationValue)
     const isMatched = compareHashedValueWithSHA256(token, user.changePasswordToken)
     if (!isMatched) {

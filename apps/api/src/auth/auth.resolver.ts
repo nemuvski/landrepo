@@ -53,15 +53,10 @@ export class AuthResolver {
   @Mutation(() => SignInUserResponse)
   @UseGuards(JwtRefreshAuthGuard)
   reissueTokens(@Context() context: WithJwtAuthGuardContext) {
-    const { sid, user } = context.req.user
-    /**
-     * JwtRefreshAuthGuardで保護しているため、authorizationValueが空というケースは考えられないが
-     * サービスのメソッドにて、値がundefinedであるケースはケアしておくこと
-     *
-     * @see {JwtRefreshAuthGuard}
-     */
-    const authorizationValue = context.req.headers.authorization
-    return this.authService.reissueTokens(user, sid, authorizationValue)
+    const { user, refreshToken } = context.req.user
+    // NOTE: Guardで事前チェックしているので、typeエラー回避
+    const authorizationValue = context.req.headers.authorization ?? ''
+    return this.authService.reissueTokens(user, refreshToken, authorizationValue)
   }
 
   @Mutation(() => Boolean)
@@ -86,7 +81,8 @@ export class AuthResolver {
   @UseGuards(JwtOneTimeGuard)
   async verifyTokenAtChangeEmail(@Context() context: WithJwtOneTimeGuardContext) {
     const { user } = context.req.user
-    const authorizationValue = context.req.headers.authorization
+    // NOTE: Guardで事前チェックしているので、typeエラー回避
+    const authorizationValue = context.req.headers.authorization ?? ''
     return this.authService.verifyTokenAtChangeEmail(user, authorizationValue)
   }
 
@@ -99,7 +95,8 @@ export class AuthResolver {
   @UseGuards(JwtOneTimeGuard)
   async verifyTokenAtChangePassword(@Context() context: WithJwtOneTimeGuardContext) {
     const { user } = context.req.user
-    const authorizationValue = context.req.headers.authorization
+    // NOTE: Guardで事前チェックしているので、typeエラー回避
+    const authorizationValue = context.req.headers.authorization ?? ''
     return this.authService.verifyTokenAtChangePassword(user, authorizationValue)
   }
 
@@ -107,7 +104,8 @@ export class AuthResolver {
   @UseGuards(JwtOneTimeGuard)
   async changePassword(@Args('input') input: ChangePasswordInput, @Context() context: WithJwtOneTimeGuardContext) {
     const { user } = context.req.user
-    const authorizationValue = context.req.headers.authorization
+    // NOTE: Guardで事前チェックしているので、typeエラー回避
+    const authorizationValue = context.req.headers.authorization ?? ''
     const isValid = await this.authService.verifyTokenAtChangePassword(user, authorizationValue)
     if (isValid) {
       await this.authService.changePassword(user, input.newPassword)

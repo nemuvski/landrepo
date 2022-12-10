@@ -11,8 +11,8 @@ import {
   type JwtOneTimePayloadUseFieldType,
 } from '@project/auth'
 import { datetime, getSeconds } from '@project/datetime'
-import type { User } from '$/nestgraphql'
 import type Prisma from '$/prisma'
+import type { User } from '@project/database'
 import { hashValueWithSHA256 } from '$/common/helpers/hash.helper'
 import { normalizedStringFieldUpdateOperationsInput } from '$/common/helpers/prisma.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'

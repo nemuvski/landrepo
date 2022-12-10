@@ -49,7 +49,7 @@ export function hashValueWithSHA256(plainValue: string) {
  * @see {@link https://nodejs.org/api/crypto.html}
  * @see {hashValueWithSHA256()}
  */
-export function compareHashedValueWithSHA256(plainValue: string, hashedValue: string) {
+export function compareHashedValueWithSHA256(plainValue: string, hashedValue: string | null) {
   const v = hashValueWithSHA256(plainValue)
   return v === hashedValue
 }
