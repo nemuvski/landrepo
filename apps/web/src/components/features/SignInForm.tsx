@@ -2,9 +2,9 @@ import { regexpValidEmailAddressFormat } from '@itsumono/utils'
 import { Button, Box, Stack, TextInput, PasswordInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import Router from 'next/router'
-import { useEffect } from 'react'
 import { Form } from '~/components/Form'
 import { useSignInHandler } from '~/modules/auth/routes/sign-in'
+import MessageBar, { useMessageBar } from '~/modules/ui/MessageBar'
 import type { RC } from '@itsumono/react'
 
 type FormFieldValues = {
@@ -13,7 +13,9 @@ type FormFieldValues = {
 }
 
 const SignInForm: RC.WithoutChildren = () => {
-  const [signIn, { error, loading }] = useSignInHandler()
+  const [signIn, { loading }] = useSignInHandler()
+
+  const [message, setMessage] = useMessageBar()
 
   const form = useForm<FormFieldValues>({
     initialValues: { email: '', password: '' },
@@ -23,43 +25,45 @@ const SignInForm: RC.WithoutChildren = () => {
     },
   })
 
-  useEffect(() => {
-    if (error) {
-      console.error(error)
-    }
-  }, [error])
-
   return (
-    <Form
-      onSubmit={form.onSubmit((values) => {
-        signIn({ email: values.email, password: values.password }).then(() => {
-          Router.replace('/')
-        })
-      })}
-    >
-      <Stack spacing='lg'>
-        <TextInput
-          required
-          label='メールアドレス'
-          placeholder='your@email.com'
-          inputMode='email'
-          autoComplete='email'
-          {...form.getInputProps('email')}
-        />
-        <PasswordInput
-          required
-          label='パスワード'
-          autoComplete='current-password'
-          {...form.getInputProps('password')}
-        />
+    <Stack spacing='lg'>
+      <MessageBar content={message} />
 
-        <Box sx={{ textAlign: 'center' }}>
-          <Button type='submit' loading={loading}>
-            ログイン
-          </Button>
-        </Box>
-      </Stack>
-    </Form>
+      <Form
+        onSubmit={form.onSubmit((values) => {
+          signIn({ email: values.email, password: values.password })
+            .then(() => {
+              Router.replace('/')
+            })
+            .catch((error) => {
+              setMessage({ level: 'error', description: error.message })
+            })
+        })}
+      >
+        <Stack spacing='lg'>
+          <TextInput
+            required
+            label='メールアドレス'
+            placeholder='your@email.com'
+            inputMode='email'
+            autoComplete='email'
+            {...form.getInputProps('email')}
+          />
+          <PasswordInput
+            required
+            label='パスワード'
+            autoComplete='current-password'
+            {...form.getInputProps('password')}
+          />
+
+          <Box sx={{ textAlign: 'center' }}>
+            <Button type='submit' loading={loading}>
+              ログイン
+            </Button>
+          </Box>
+        </Stack>
+      </Form>
+    </Stack>
   )
 }
 

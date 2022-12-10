@@ -53,13 +53,7 @@ export const AuthSessionProvider: RC.WithChildren<{ initialSession?: Session | n
 
 const ValidTokenObserver = () => {
   const session = useSession()
-  const [reissueToken, { error }] = useReissueTokenHandler()
-
-  useEffect(() => {
-    if (error) {
-      console.error(error)
-    }
-  }, [error])
+  const [reissueToken] = useReissueTokenHandler()
 
   useEffect(
     () => {
@@ -67,7 +61,9 @@ const ValidTokenObserver = () => {
         console.debug('[Session]', session)
         const timer = setInterval(() => {
           if (isNecessaryToReissueToken(session.accessTokenExpiresIn)) {
-            reissueToken()
+            reissueToken().catch((error) => {
+              console.error(error)
+            })
           }
         }, CHECK_VALID_TOKEN_INTERVAL)
 

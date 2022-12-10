@@ -5,6 +5,7 @@ import { useForm } from '@mantine/form'
 import { useState } from 'react'
 import { gql, useMutation } from 'urql'
 import { Form } from '~/components/Form'
+import MessageBar, { useMessageBar } from '~/modules/ui/MessageBar'
 import type { RC } from '@itsumono/react'
 
 type FormFieldValues = {
@@ -13,6 +14,8 @@ type FormFieldValues = {
 
 const ClaimChangingPasswordForm: RC.WithoutChildren<{ currentEmail?: string }> = ({ currentEmail }) => {
   const [isSent, setIsSent] = useState(false)
+
+  const [message, setMessage] = useMessageBar()
 
   const [{ fetching }, claimChangingPassword] = useMutation<{ claimChangingPassword: true }, { email: string }>(gql`
     mutation ($email: String!) {
@@ -36,36 +39,42 @@ const ClaimChangingPasswordForm: RC.WithoutChildren<{ currentEmail?: string }> =
   })
 
   return (
-    <Form
-      onSubmit={form.onSubmit((values) => {
-        claimChangingPassword({ email: values.email }).then((v) => {
-          if (v.data && v.data.claimChangingPassword) {
-            setIsSent(true)
-          }
-        })
-      })}
-    >
-      <Stack spacing='lg'>
-        <TextInput
-          required
-          readOnly={!!currentEmail}
-          disabled={!!currentEmail}
-          label='対象アカウントのメールアドレス'
-          placeholder='your@email.com'
-          inputMode='email'
-          autoComplete='email'
-          {...form.getInputProps('email')}
-        />
-      </Stack>
+    <Stack spacing='lg'>
+      <MessageBar content={message} />
 
-      <Maybe test={!isSent}>
-        <Box sx={{ textAlign: 'center' }}>
-          <Button type='submit' loading={fetching}>
-            確認メール送信
-          </Button>
-        </Box>
-      </Maybe>
-    </Form>
+      <Form
+        onSubmit={form.onSubmit((values) => {
+          claimChangingPassword({ email: values.email }).then((v) => {
+            if (v.error) {
+              setMessage({ level: 'error', description: v.error.message })
+            } else if (v.data && v.data.claimChangingPassword) {
+              setIsSent(true)
+            }
+          })
+        })}
+      >
+        <Stack spacing='lg'>
+          <TextInput
+            required
+            readOnly={!!currentEmail}
+            disabled={!!currentEmail}
+            label='対象アカウントのメールアドレス'
+            placeholder='your@email.com'
+            inputMode='email'
+            autoComplete='email'
+            {...form.getInputProps('email')}
+          />
+        </Stack>
+
+        <Maybe test={!isSent}>
+          <Box sx={{ textAlign: 'center' }}>
+            <Button type='submit' loading={fetching}>
+              確認メール送信
+            </Button>
+          </Box>
+        </Maybe>
+      </Form>
+    </Stack>
   )
 }
 

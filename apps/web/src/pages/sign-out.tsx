@@ -8,13 +8,7 @@ import { InBoundButtonLink } from '~/modules/ui/Link'
 import type { NextPage } from 'next'
 
 const SignOutPage: NextPage = () => {
-  const [signOut, { error, loading }] = useSignOutHandler()
-
-  useEffect(() => {
-    if (error) {
-      console.error(error)
-    }
-  }, [error])
+  const [signOut, { loading }] = useSignOutHandler()
 
   useEffect(
     () => {

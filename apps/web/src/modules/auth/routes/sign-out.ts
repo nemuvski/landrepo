@@ -8,16 +8,14 @@ import { defaultCookieOptions } from '~/modules/cookie'
 import { graphqlClient } from '~/modules/graphql'
 import { axiosNextApiRoute } from '~/modules/http-client'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { ApiRouteErrorResponse } from '~/exceptions/api-route.error'
 
 /**
  * サインアウトのハンドラを提供する
  */
-export function useSignOutHandler(): [() => Promise<void>, { loading: boolean; error: ApiRouteErrorResponse | null }] {
+export function useSignOutHandler(): [() => Promise<void>, { loading: boolean }] {
   const updater = useSessionUpdater()
   const abortController = useRef<AbortController | undefined>()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<ApiRouteErrorResponse | null>(null)
 
   useEffect(() => {
     abortController.current = new AbortController()
@@ -30,7 +28,6 @@ export function useSignOutHandler(): [() => Promise<void>, { loading: boolean; e
 
   const handler = async () => {
     setLoading(true)
-    setError(null)
     try {
       await axiosNextApiRoute.post(
         '/auth/sign-out',
@@ -41,15 +38,13 @@ export function useSignOutHandler(): [() => Promise<void>, { loading: boolean; e
       )
       updater(null)
     } catch (error) {
-      if (isApiRouteError(error)) {
-        setError(error)
-      }
+      throw error
     } finally {
       setLoading(false)
     }
   }
 
-  return [handler, { loading, error }]
+  return [handler, { loading }]
 }
 
 /**

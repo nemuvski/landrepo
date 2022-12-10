@@ -12,7 +12,6 @@ import type { Tokens } from '@project/auth'
 import type { AxiosResponse } from 'axios'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { UserEntity } from '~/entities/user.entity'
-import type { ApiRouteErrorResponse } from '~/exceptions/api-route.error'
 import type { Session } from '~/modules/auth'
 
 export type SignInMutationInput = { email: string; password: string }
@@ -20,14 +19,10 @@ export type SignInMutationInput = { email: string; password: string }
 /**
  * サインインのハンドラを提供する
  */
-export function useSignInHandler(): [
-  (input: SignInMutationInput) => Promise<void>,
-  { loading: boolean; error: ApiRouteErrorResponse | null }
-] {
+export function useSignInHandler(): [(input: SignInMutationInput) => Promise<void>, { loading: boolean }] {
   const updater = useSessionUpdater()
   const abortController = useRef<AbortController | undefined>()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<ApiRouteErrorResponse | null>(null)
 
   useEffect(() => {
     abortController.current = new AbortController()
@@ -40,7 +35,6 @@ export function useSignInHandler(): [
 
   const handler = async (input: SignInMutationInput) => {
     setLoading(true)
-    setError(null)
     try {
       const response = await axiosNextApiRoute.post<Session, AxiosResponse<Session>, SignInMutationInput>(
         '/auth/sign-in',
@@ -51,16 +45,14 @@ export function useSignInHandler(): [
       )
       updater(response.data)
     } catch (error) {
-      if (isApiRouteError(error)) {
-        setError(error)
-      }
       updater(null)
+      throw error
     } finally {
       setLoading(false)
     }
   }
 
-  return [handler, { loading, error }]
+  return [handler, { loading }]
 }
 
 /**

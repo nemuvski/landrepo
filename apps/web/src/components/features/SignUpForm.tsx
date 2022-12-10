@@ -4,6 +4,7 @@ import { useForm } from '@mantine/form'
 import { MAX_LENGTH_PASSWORD } from '@project/auth'
 import { gql, useMutation } from 'urql'
 import { Form } from '~/components/Form'
+import MessageBar, { useMessageBar } from '~/modules/ui/MessageBar'
 import type { RC } from '@itsumono/react'
 
 type FormFieldValues = {
@@ -18,6 +19,8 @@ const SignUpForm: RC.WithoutChildren = () => {
     }
   `)
 
+  const [message, setMessage] = useMessageBar()
+
   const form = useForm<FormFieldValues>({
     initialValues: { email: '', password: '' },
     validate: {
@@ -28,33 +31,37 @@ const SignUpForm: RC.WithoutChildren = () => {
   })
 
   return (
-    <Form
-      onSubmit={form.onSubmit((values) => {
-        signUp({ email: values.email, password: values.password }).then((v) => {
-          if (v.error) {
-            console.error(v.error)
-          }
-        })
-      })}
-    >
-      <Stack spacing='lg'>
-        <TextInput
-          required
-          label='メールアドレス'
-          placeholder='your@email.com'
-          inputMode='email'
-          autoComplete='email'
-          {...form.getInputProps('email')}
-        />
-        <PasswordInput required label='パスワード' autoComplete='new-password' {...form.getInputProps('password')} />
+    <Stack spacing='lg'>
+      <MessageBar content={message} />
 
-        <Box sx={{ textAlign: 'center' }}>
-          <Button type='submit' loading={fetching}>
-            新規登録
-          </Button>
-        </Box>
-      </Stack>
-    </Form>
+      <Form
+        onSubmit={form.onSubmit((values) => {
+          signUp({ email: values.email, password: values.password }).then((v) => {
+            if (v.error) {
+              setMessage({ level: 'error', description: v.error.message })
+            }
+          })
+        })}
+      >
+        <Stack spacing='lg'>
+          <TextInput
+            required
+            label='メールアドレス'
+            placeholder='your@email.com'
+            inputMode='email'
+            autoComplete='email'
+            {...form.getInputProps('email')}
+          />
+          <PasswordInput required label='パスワード' autoComplete='new-password' {...form.getInputProps('password')} />
+
+          <Box sx={{ textAlign: 'center' }}>
+            <Button type='submit' loading={fetching}>
+              新規登録
+            </Button>
+          </Box>
+        </Stack>
+      </Form>
+    </Stack>
   )
 }
 

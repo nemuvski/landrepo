@@ -11,20 +11,15 @@ import { axiosNextApiRoute } from '~/modules/http-client'
 import type { Tokens } from '@project/auth'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { UserEntity } from '~/entities/user.entity'
-import type { ApiRouteErrorResponse } from '~/exceptions/api-route.error'
 import type { Session } from '~/modules/auth'
 
 /**
  * トークン再発行のハンドラを提供する
  */
-export function useReissueTokenHandler(): [
-  () => Promise<void>,
-  { loading: boolean; error: ApiRouteErrorResponse | null }
-] {
+export function useReissueTokenHandler(): [() => Promise<void>, { loading: boolean }] {
   const updater = useSessionUpdater()
   const abortController = useRef<AbortController | undefined>()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<ApiRouteErrorResponse | null>(null)
 
   useEffect(() => {
     abortController.current = new AbortController()
@@ -37,7 +32,6 @@ export function useReissueTokenHandler(): [
 
   const handler = async () => {
     setLoading(true)
-    setError(null)
     try {
       const response = await axiosNextApiRoute.post<Session>(
         '/auth/reissue',
@@ -48,16 +42,14 @@ export function useReissueTokenHandler(): [
       )
       updater(response.data)
     } catch (error) {
-      if (isApiRouteError(error)) {
-        setError(error)
-      }
       updater(null)
+      throw error
     } finally {
       setLoading(false)
     }
   }
 
-  return [handler, { loading, error }]
+  return [handler, { loading }]
 }
 
 /**
