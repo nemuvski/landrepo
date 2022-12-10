@@ -1,11 +1,12 @@
 import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
-import { AuthErrorMessage, UserErrorMessage } from '@project/api-error'
+import { AuthErrorMessage } from '@project/api-error'
 import { JwtOneTimePayloadUseField } from '@project/auth'
 import { UserRole, UserStatus, type User, type RefreshToken } from '@project/database'
 import { datetime } from '@project/datetime'
 import type { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
 import type { VerifySessionResponse } from '$/auth/dto/verify-session.response'
 import { TokenService } from '$/auth/token.service'
+import { isRestrictedSendingConfirmationEmail } from '$/common/helpers/confirmation-email.helper'
 import { compareHashedValueWithBcrypt, compareHashedValueWithSHA256 } from '$/common/helpers/hash.helper'
 import { getTokenByAuthorizationHeader } from '$/common/helpers/http-header.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
@@ -47,7 +48,7 @@ export class AuthService {
    */
   async signUp(email: string, password: string, role: UserRole = UserRole.GENERAL): Promise<boolean> {
     if (!this.usersService.isValidPasswordFormat(password)) {
-      throw new BadRequestException(UserErrorMessage.InvalidPasswordFormat)
+      throw new BadRequestException(AuthErrorMessage.InvalidPasswordFormat)
     }
 
     const user = await this.usersService.findUnique({ where: { email } })
@@ -57,6 +58,10 @@ export class AuthService {
 
     let oneTimeToken: string
     if (user) {
+      if (user.signUpConfirmationSentAt && isRestrictedSendingConfirmationEmail(user.signUpConfirmationSentAt)) {
+        throw new ForbiddenException(AuthErrorMessage.RestrictedSendingConfirmationEmail)
+      }
+
       oneTimeToken = this.tokenService.getOneTimeToken(user, JwtOneTimePayloadUseField.SignUp)
       await this.usersService.update({
         data: {
@@ -185,7 +190,7 @@ export class AuthService {
   }
 
   /**
-   * メールアドレス変更のメールを送信する
+   * メールアドレス変更の確認メールを送信する
    *
    * @param user
    * @param newEmail
@@ -196,6 +201,11 @@ export class AuthService {
     if (newEmailUsingUser) {
       throw new BadRequestException(AuthErrorMessage.UserAlreadyExists)
     }
+
+    if (user.changeEmailSentAt && isRestrictedSendingConfirmationEmail(user.changeEmailSentAt)) {
+      throw new ForbiddenException(AuthErrorMessage.RestrictedSendingConfirmationEmail)
+    }
+
     const oneTimeToken = this.tokenService.getOneTimeToken(user, JwtOneTimePayloadUseField.ChangeEmail)
     await this.usersService.update({
       data: {
@@ -237,7 +247,7 @@ export class AuthService {
   }
 
   /**
-   * パスワード変更のメールを送信する
+   * パスワード変更の確認メールを送信する
    *
    * @param email
    */
@@ -246,6 +256,10 @@ export class AuthService {
     if (!user) {
       throw new BadRequestException(AuthErrorMessage.UserNotFound)
     }
+    if (user.changePasswordSentAt && isRestrictedSendingConfirmationEmail(user.changePasswordSentAt)) {
+      throw new ForbiddenException(AuthErrorMessage.RestrictedSendingConfirmationEmail)
+    }
+
     const oneTimeToken = this.tokenService.getOneTimeToken(user, JwtOneTimePayloadUseField.ChangePassword)
     await this.usersService.update({
       data: {
@@ -283,7 +297,7 @@ export class AuthService {
    */
   async changePassword(user: User, newPassword: string): Promise<boolean> {
     if (!this.usersService.isValidPasswordFormat(newPassword)) {
-      throw new BadRequestException(UserErrorMessage.InvalidPasswordFormat)
+      throw new BadRequestException(AuthErrorMessage.InvalidPasswordFormat)
     }
 
     await this.usersService.update({

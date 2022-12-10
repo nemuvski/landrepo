@@ -49,6 +49,16 @@ export const AuthErrorMessage = {
    * ※ context経由で取得したAuthorizationヘッダー値がないといったケース
    */
   NoAuthority: 'no authority',
+  /**
+   * パスワードの有効条件を満たしていない
+   *
+   * ※ 長さが上限値を超えた等
+   */
+  InvalidPasswordFormat: 'invalid password format',
+  /**
+   * 確認メールの再送信の間隔制限
+   */
+  RestrictedSendingConfirmationEmail: 'restricted sending confirmation email',
 } as const
 
 export type AuthErrorMessageType = typeof AuthErrorMessage[keyof typeof AuthErrorMessage]
