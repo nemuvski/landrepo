@@ -1,5 +1,4 @@
 import { trimGqlPrefixErrorMessage } from '@project/api-error'
-import { AxiosError } from 'axios/index'
 import { destroyCookie, parseCookies } from 'nookies'
 import { useEffect, useRef, useState } from 'react'
 import { gql } from 'urql'
@@ -8,7 +7,7 @@ import { useSessionUpdater } from '~/modules/auth'
 import { COOKIE_NAME_ACCESS_TOKEN, COOKIE_NAME_REFRESH_TOKEN } from '~/modules/auth/constants'
 import { defaultCookieOptions } from '~/modules/cookie'
 import { graphqlClient } from '~/modules/graphql'
-import { axiosNextApiRoute } from '~/modules/http-client'
+import { axiosNextApiRoute, AxiosError } from '~/modules/http-client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 /**

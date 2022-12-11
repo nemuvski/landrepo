@@ -1,5 +1,6 @@
-import axios from 'axios'
-import type { AxiosRequestConfig } from 'axios'
+import axios, { type AxiosRequestConfig } from 'axios'
+
+export { AxiosError, type AxiosResponse } from 'axios'
 
 const baseConfig: AxiosRequestConfig = {
   timeout: 10000,
