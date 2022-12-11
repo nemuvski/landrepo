@@ -100,6 +100,17 @@ export class TokenService {
   }
 
   /**
+   * RefreshTokenテーブルで失効した(expiresInが過去のもの)レコード群を削除
+   */
+  async pruneRefreshTokens() {
+    const currentTime = datetime()
+    const batch = await this.databaseService.refreshToken.deleteMany({
+      where: { expiresIn: { lte: currentTime.toISOString() } },
+    })
+    return batch.count
+  }
+
+  /**
    * RefreshTokenテーブルのレコードを1件更新
    *
    * @param args

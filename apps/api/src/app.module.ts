@@ -4,6 +4,8 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
 import { GraphQLModule } from '@nestjs/graphql'
+import { ScheduleModule } from '@nestjs/schedule'
+import { CronModule } from './cron/cron.module'
 import { AppLoggerModule } from './logger/app-logger.module'
 import { MailModule } from './mail/mail.module'
 import type { ApolloDriverConfig } from '@nestjs/apollo'
@@ -39,10 +41,12 @@ import { UsersService } from '$/users/users.service'
       autoSchemaFile: resolve(process.cwd(), 'schema.graphql'),
       sortSchema: true,
     }),
+    ScheduleModule.forRoot(),
+    MailModule,
+    CronModule,
     DatabaseModule,
     AuthModule,
     UsersModule,
-    MailModule,
   ],
   controllers: [AppController],
   providers: [

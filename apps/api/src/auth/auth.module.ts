@@ -22,6 +22,6 @@ import { UsersModule } from '$/users/users.module'
     JwtRefreshStrategy,
     JwtOneTimeStrategy,
   ],
-  exports: [AuthService, JwtModule],
+  exports: [AuthService, TokenService, JwtModule],
 })
 export class AuthModule {}
