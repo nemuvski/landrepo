@@ -20,7 +20,8 @@ export const validationEnvSchema = Joi.object({
   NEST_MAILER_TRANSPORT_SMTP_PORT: Joi.number().port().default(25),
   NEST_MAILER_TRANSPORT_INCOMING_USER: Joi.string().required(),
   NEST_MAILER_TRANSPORT_INCOMING_PASSWORD: Joi.string().required(),
-  NEXT_SITE_BASE_URL: Joi.string().uri().required(),
+  NEST_SITE_BASE_URL: Joi.string().uri().required(),
+  NEST_LISTEN_PORT: Joi.number().port().default(4000),
 })
 
 export const validationEnvOptions: Joi.ValidationOptions = {
@@ -29,7 +30,7 @@ export const validationEnvOptions: Joi.ValidationOptions = {
 }
 
 export function getSiteUrlOrigin() {
-  return new URL(process.env.NEXT_SITE_BASE_URL).origin
+  return new URL(process.env.NEST_SITE_BASE_URL).origin
 }
 
 export function isProductionEnv() {

@@ -12,7 +12,7 @@ export class MailService {
   constructor(private mailerService: MailerService, private configService: ConfigService) {}
 
   private getSiteUrl(path: string) {
-    return new URL(buildPath(this.configService.get<string>('NEXT_SITE_BASE_URL'), path))
+    return new URL(buildPath(this.configService.get<string>('NEST_SITE_BASE_URL'), path))
   }
 
   /**

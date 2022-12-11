@@ -29,7 +29,7 @@ async function bootstrap() {
     maxAge: 3600,
   })
 
-  await app.listen(4000)
+  await app.listen(process.env.NEST_LISTEN_PORT)
 }
 
 bootstrap()

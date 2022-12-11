@@ -8,7 +8,8 @@ declare namespace NodeJS {
     /**
      * NOTE: dotenvファイルにて指定される
      */
-    readonly NEXT_SITE_BASE_URL: string
+    readonly NEST_SITE_BASE_URL: string
+    readonly NEST_LISTEN_PORT: string
     readonly NEST_JWT_SECRET_KEY: string
     readonly NEST_JWT_REFRESH_SECRET_KEY: string
     readonly NEST_JWT_ONE_TIME_SECRET_KEY: string
