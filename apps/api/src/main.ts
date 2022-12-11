@@ -1,7 +1,7 @@
 import { ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from '$/app.module'
-import { isDevelopmentEnv } from '$/common/helpers/env.helper'
+import { getSiteUrlOrigin, isDevelopmentEnv } from '$/common/helpers/env.helper'
 import { AppLoggerService } from '$/logger/app-logger.service'
 
 async function bootstrap() {
@@ -17,8 +17,18 @@ async function bootstrap() {
     })
   )
 
-  // TODO: 必要に応じて有効にすること
-  // app.enableCors()
+  /**
+   * NOTE: GraphQLエンドポイントについてのCORSはGraphQLModuleの設定に記載する
+   *
+   * @see {@link https://docs.nestjs.com/security/cors}
+   * @see {@link https://github.com/expressjs/cors#configuration-options}
+   */
+  app.enableCors({
+    origin: getSiteUrlOrigin(),
+    credentials: true,
+    maxAge: 3600,
+  })
+
   await app.listen(4000)
 }
 

@@ -14,6 +14,7 @@ import { AuthModule } from '$/auth/auth.module'
 import { HttpExceptionFilter } from '$/common/filters/http-exception.filter'
 import {
   getEnvFilePaths,
+  getSiteUrlOrigin,
   isDevelopmentEnv,
   validationEnvOptions,
   validationEnvSchema,
@@ -40,6 +41,15 @@ import { UsersService } from '$/users/users.service'
       // NOTE: schemaファイルを出力するパスに相当
       autoSchemaFile: resolve(process.cwd(), 'schema.graphql'),
       sortSchema: true,
+      /**
+       * @see {@link https://docs.nestjs.com/security/cors}
+       * @see {@link https://github.com/expressjs/cors#configuration-options}
+       */
+      cors: {
+        origin: getSiteUrlOrigin(),
+        credentials: true,
+        maxAge: 3600,
+      },
     }),
     ScheduleModule.forRoot(),
     MailModule,

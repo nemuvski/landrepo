@@ -40,7 +40,8 @@ export function useSignOutHandler(): [() => Promise<void>, { loading: boolean }]
       updater(null)
     } catch (error) {
       console.error(error)
-      if (error instanceof AxiosError) {
+      // NOTE: abortされると、error.responseがないためケアしておく
+      if (error instanceof AxiosError && error.response) {
         // @ts-ignore: statusはエラーコードが入る
         throw new ApiRouteError(error.response.status, error.response?.data.message)
       }

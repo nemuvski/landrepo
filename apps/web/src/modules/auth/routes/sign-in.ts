@@ -47,7 +47,8 @@ export function useSignInHandler(): [(input: SignInMutationInput) => Promise<voi
     } catch (error) {
       console.error(error)
       updater(null)
-      if (error instanceof AxiosError) {
+      // NOTE: abortされると、error.responseがないためケアしておく
+      if (error instanceof AxiosError && error.response) {
         // @ts-ignore: statusはエラーコードが入る
         throw new ApiRouteError(error.response.status, error.response?.data.message)
       }

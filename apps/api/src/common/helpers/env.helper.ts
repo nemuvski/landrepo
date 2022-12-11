@@ -28,6 +28,10 @@ export const validationEnvOptions: Joi.ValidationOptions = {
   abortEarly: true,
 }
 
+export function getSiteUrlOrigin() {
+  return new URL(process.env.NEXT_SITE_BASE_URL).origin
+}
+
 export function isProductionEnv() {
   return process.env.NODE_ENV === 'production'
 }
