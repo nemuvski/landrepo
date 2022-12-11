@@ -8,6 +8,7 @@ import { COOKIE_NAME_ACCESS_TOKEN, COOKIE_NAME_REFRESH_TOKEN } from '~/modules/a
 import { defaultCookieOptions } from '~/modules/cookie'
 import { graphqlClient } from '~/modules/graphql'
 import { axiosNextApiRoute, AxiosError } from '~/modules/http-client'
+import { getRateLimitToken, rateLimit } from '~/modules/rate-limit'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 /**
@@ -58,6 +59,8 @@ export function useSignOutHandler(): [() => Promise<void>, { loading: boolean }]
  */
 export async function signOutApiRoute(req: NextApiRequest, res: NextApiResponse) {
   try {
+    rateLimit.check(res, getRateLimitToken(req))
+
     if (req.method !== 'POST') {
       res.setHeader('Allow', 'POST')
       throw new ApiRouteError(405)

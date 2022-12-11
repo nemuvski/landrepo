@@ -9,6 +9,7 @@ import { COOKIE_NAME_ACCESS_TOKEN, COOKIE_NAME_REFRESH_TOKEN } from '~/modules/a
 import { defaultCookieOptions } from '~/modules/cookie'
 import { graphqlClient } from '~/modules/graphql'
 import { axiosNextApiRoute, AxiosError, type AxiosResponse } from '~/modules/http-client'
+import { getRateLimitToken, rateLimit } from '~/modules/rate-limit'
 import type { Tokens } from '@project/auth'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { UserEntity } from '~/entities/user.entity'
@@ -65,6 +66,8 @@ export function useSignInHandler(): [(input: SignInMutationInput) => Promise<voi
  */
 export async function signInApiRoute(req: NextApiRequest, res: NextApiResponse) {
   try {
+    rateLimit.check(res, getRateLimitToken(req))
+
     if (req.method !== 'POST') {
       res.setHeader('Allow', 'POST')
       throw new ApiRouteError(405)
