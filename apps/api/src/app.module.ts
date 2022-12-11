@@ -1,10 +1,11 @@
 import { resolve } from 'node:path'
 import { ApolloDriver } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
 import { GraphQLModule } from '@nestjs/graphql'
 import { ScheduleModule } from '@nestjs/schedule'
+import { ThrottlerModule } from '@nestjs/throttler'
 import { CronModule } from './cron/cron.module'
 import { AppLoggerModule } from './logger/app-logger.module'
 import { MailModule } from './mail/mail.module'
@@ -12,6 +13,7 @@ import type { ApolloDriverConfig } from '@nestjs/apollo'
 import { AppController } from '$/app.controller'
 import { AuthModule } from '$/auth/auth.module'
 import { HttpExceptionFilter } from '$/common/filters/http-exception.filter'
+import { AppThrottlerGuard } from '$/common/guards/app-throttler.guard'
 import {
   getEnvFilePaths,
   getSiteUrlOrigin,
@@ -51,6 +53,13 @@ import { UsersService } from '$/users/users.service'
         maxAge: 3600,
       },
     }),
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        ttl: configService.get<number>('NEST_THROTTLE_TTL'),
+        limit: configService.get<number>('NEST_THROTTLE_LIMIT'),
+      }),
+    }),
     ScheduleModule.forRoot(),
     MailModule,
     CronModule,
@@ -62,6 +71,7 @@ import { UsersService } from '$/users/users.service'
   providers: [
     { provide: APP_INTERCEPTOR, useClass: AccessLoggingInterceptor },
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
+    { provide: APP_GUARD, useClass: AppThrottlerGuard },
     UsersService,
   ],
 })
