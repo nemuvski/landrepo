@@ -28,7 +28,7 @@ export class AuthService {
    * @param password 平文のパスワード
    */
   async validateUser(email: string, password: string) {
-    const user = await this.usersService.findFirst({ where: { email, status: UserStatus.ACTIVE } })
+    const user = await this.usersService.findFirst({ where: { email, status: UserStatus.CONFIRMED } })
     if (user) {
       const isMatched = await compareHashedValueWithBcrypt(password, user.password)
       if (isMatched) {
@@ -53,7 +53,7 @@ export class AuthService {
 
     const user = await this.usersService.findUnique({ where: { email } })
     if (user) {
-      if (this.usersService.isDeletingUser(user)) {
+      if (this.usersService.isCanceledUser(user)) {
         throw new ForbiddenException(AuthErrorMessage.EmailAddressCurrentlyUnavailable)
       }
       // NOTE: NotConfirmedステータスの場合は再度確認メールを送信できるようにしたいため除外しない
@@ -186,7 +186,7 @@ export class AuthService {
     await this.usersService.update({
       where: { id: user.id },
       data: {
-        status: { set: UserStatus.ACTIVE },
+        status: { set: UserStatus.CONFIRMED },
         signUpConfirmationToken: { set: null },
         signUpConfirmedAt: { set: datetime().toISOString() },
       },

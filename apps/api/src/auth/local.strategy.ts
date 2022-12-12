@@ -26,7 +26,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) implements IPasspo
     if (this.usersService.isNotConfirmedUser(user)) {
       throw new UnauthorizedException(AuthErrorMessage.UserNotConfirmed)
     }
-    if (!this.usersService.isActiveUser(user)) {
+    if (!this.usersService.isConfirmedUser(user)) {
       throw new UnauthorizedException(AuthErrorMessage.InvalidUser)
     }
     return user

@@ -19,8 +19,8 @@ export class UsersService {
    *
    * @param user
    */
-  isDeletingUser(user: User) {
-    return user.status === UserStatus.INACTIVE
+  isCanceledUser(user: User) {
+    return user.status === UserStatus.CANCELED
   }
 
   /**
@@ -37,8 +37,8 @@ export class UsersService {
    *
    * @param user
    */
-  isActiveUser(user: User) {
-    return user.status === UserStatus.ACTIVE
+  isConfirmedUser(user: User) {
+    return user.status === UserStatus.CONFIRMED
   }
 
   /**
@@ -60,7 +60,7 @@ export class UsersService {
    * @param user
    */
   isTargetChangingEmailConfirmation(user: User) {
-    return this.isActiveUser(user) && user.changeEmailToken && user.changeEmail
+    return this.isConfirmedUser(user) && user.changeEmailToken && user.changeEmail
   }
 
   /**
@@ -71,7 +71,7 @@ export class UsersService {
    * @param user
    */
   isTargetChangingPasswordConfirmation(user: User) {
-    return this.isActiveUser(user) && user.changePasswordToken
+    return this.isConfirmedUser(user) && user.changePasswordToken
   }
 
   /**

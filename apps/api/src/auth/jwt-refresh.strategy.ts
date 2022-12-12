@@ -25,7 +25,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
   }
 
   async validate(payload: JwtPayload): Promise<JwtStrategyValidateReturnType> {
-    const user = await this.usersService.findFirst({ where: { id: payload.sub, status: UserStatus.ACTIVE } })
+    const user = await this.usersService.findFirst({ where: { id: payload.sub, status: UserStatus.CONFIRMED } })
     if (!user) {
       throw new UnauthorizedException(AuthErrorMessage.UserNotFound)
     }

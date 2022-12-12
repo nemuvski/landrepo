@@ -36,9 +36,9 @@ enum UserRole {
 }
 
 enum UserStatus {
-  ACTIVE
-  INACTIVE
   BANNED
+  CANCELED
+  CONFIRMED
   NOT_CONFIRMED
 }
 
