@@ -14,6 +14,9 @@ const Home: NextPage = () => {
         <Stack spacing='lg'>
           <InBoundButtonLink href='/settings/change-email'>メールアドレス変更</InBoundButtonLink>
           <InBoundButtonLink href='/settings/change-password'>パスワード変更</InBoundButtonLink>
+          <InBoundButtonLink href='/settings/cancel' color='red' variant='outline'>
+            退会
+          </InBoundButtonLink>
           <InBoundButtonLink href='/sign-out' color='gray'>
             サインアウト
           </InBoundButtonLink>

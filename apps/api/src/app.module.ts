@@ -22,7 +22,6 @@ import {
 import { AccessLoggingInterceptor } from '$/common/interceptors/access-logging.interceptor'
 import { DatabaseModule } from '$/database/database.module'
 import { UsersModule } from '$/users/users.module'
-import { UsersService } from '$/users/users.service'
 
 @Module({
   imports: [
@@ -62,7 +61,6 @@ import { UsersService } from '$/users/users.service'
   providers: [
     { provide: APP_INTERCEPTOR, useClass: AccessLoggingInterceptor },
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
-    UsersService,
   ],
 })
 export class AppModule {}

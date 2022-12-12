@@ -3,6 +3,7 @@ import { AuthErrorMessage } from '@project/api-error'
 import { JwtOneTimePayloadUseField } from '@project/auth'
 import { UserRole, UserStatus, type User, type RefreshToken } from '@project/database'
 import { datetime } from '@project/datetime'
+import type { CancelServiceInput } from '$/auth/dto/cancel-service.input'
 import type { SignInUserResponse } from '$/auth/dto/sign-in-user.response'
 import type { VerifySessionResponse } from '$/auth/dto/verify-session.response'
 import { TokenService } from '$/auth/token.service'
@@ -11,12 +12,14 @@ import { compareHashedValueWithBcrypt, compareHashedValueWithSHA256 } from '$/co
 import { getTokenByAuthorizationHeader } from '$/common/helpers/http-header.helper'
 import { generateUUIDv4 } from '$/common/helpers/uuid.helper'
 import { MailService } from '$/mail/mail.service'
+import { CancelUserService } from '$/users/cancel-user.service'
 import { UsersService } from '$/users/users.service'
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
+    private cancelUserService: CancelUserService,
     private tokenService: TokenService,
     private mailService: MailService
   ) {}
@@ -321,6 +324,41 @@ export class AuthService {
       },
       where: { id: user.id },
     })
+    return true
+  }
+
+  /**
+   * サービス退会
+   *
+   * @param user
+   * @param refreshToken
+   * @param authorizationValue
+   * @param input
+   */
+  async cancelService(
+    user: User,
+    refreshToken: RefreshToken,
+    authorizationValue: string,
+    input: CancelServiceInput
+  ): Promise<boolean> {
+    const isPasswordMatched = await compareHashedValueWithBcrypt(input.password, user.password)
+    if (!isPasswordMatched) {
+      throw new UnauthorizedException(AuthErrorMessage.PasswordIncorrect)
+    }
+    if (!this.usersService.isConfirmedUser(user)) {
+      throw new ForbiddenException(AuthErrorMessage.InvalidUser)
+    }
+    const currentRefreshToken = getTokenByAuthorizationHeader(authorizationValue)
+    const isTokenMatched = compareHashedValueWithSHA256(currentRefreshToken, refreshToken.token)
+    if (!isTokenMatched) {
+      throw new UnauthorizedException(AuthErrorMessage.InvalidSession)
+    }
+    // ステータス更新
+    await this.usersService.update({ data: { status: { set: UserStatus.CANCELED } }, where: { id: user.id } })
+    // キャンセルするユーザーの名簿に追加
+    await this.cancelUserService.create({ data: { id: user.id } })
+    // ユーザー用に発行したリフレッシュトークン（セッションレコード）群を無効
+    await this.tokenService.removeRefreshTokens({ where: { userId: user.id } })
     return true
   }
 }

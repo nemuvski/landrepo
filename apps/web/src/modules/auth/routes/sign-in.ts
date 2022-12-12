@@ -39,9 +39,7 @@ export function useSignInHandler(): [(input: SignInMutationInput) => Promise<voi
     try {
       const response = await axiosNextApiRoute.post<Session, AxiosResponse<Session>, SignInMutationInput>(
         '/auth/sign-in',
-        {
-          ...input,
-        },
+        { ...input },
         { signal: abortController.current?.signal }
       )
       updater(response.data)

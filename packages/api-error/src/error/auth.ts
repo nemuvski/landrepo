@@ -30,7 +30,11 @@ export const AuthErrorMessage = {
   /**
    * 新規登録時入力したメールアドレスが削除予定のユーザーが利用しているもの
    */
-  EmailAddressCurrentlyUnavailable: 'Email address currently unavailable',
+  EmailAddressCurrentlyUnavailable: 'email address currently unavailable',
+  /**
+   * パスワードが誤っている
+   */
+  PasswordIncorrect: 'password incorrect',
   /**
    * 無効なユーザー
    *

@@ -1,6 +1,7 @@
 import { UseGuards } from '@nestjs/common'
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 import { AuthService } from '$/auth/auth.service'
+import { CancelServiceInput } from '$/auth/dto/cancel-service.input'
 import { ChangePasswordInput } from '$/auth/dto/change-password.input'
 import { ClaimChangingOwnEmailInput } from '$/auth/dto/claim-changing-email.input'
 import { ClaimChangingPasswordInput } from '$/auth/dto/claim-changing-password.input'
@@ -111,5 +112,14 @@ export class AuthResolver {
       await this.authService.changePassword(user, input.newPassword)
     }
     return true
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(JwtRefreshAuthGuard)
+  async cancelService(@Args('input') input: CancelServiceInput, @Context() context: WithJwtAuthGuardContext) {
+    const { user, refreshToken } = context.req.user
+    // NOTE: Guardで事前チェックしているので、typeエラー回避
+    const authorizationValue = context.req.headers.authorization ?? ''
+    return this.authService.cancelService(user, refreshToken, authorizationValue, input)
   }
 }

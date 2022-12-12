@@ -100,13 +100,19 @@ export class TokenService {
   }
 
   /**
+   * RefreshTokenテーブルからレコードを条件に基づいて複数削除
+   *
+   * @param args
+   */
+  async removeRefreshTokens(args: Prisma.RefreshTokenDeleteManyArgs) {
+    return this.databaseService.refreshToken.deleteMany(args)
+  }
+
+  /**
    * RefreshTokenテーブルで失効した(expiresInが過去のもの)レコード群を削除
    */
   async pruneRefreshTokens() {
-    const currentTime = datetime()
-    const batch = await this.databaseService.refreshToken.deleteMany({
-      where: { expiresIn: { lte: currentTime.toISOString() } },
-    })
+    const batch = await this.removeRefreshTokens({ where: { expiresIn: { lte: datetime().toISOString() } } })
     return batch.count
   }
 

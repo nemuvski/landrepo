@@ -44,19 +44,19 @@ enum UserStatus {
 
 model User {
   /// @Field(() => ID)
-  id                        String         @id @default(uuid()) @db.Uuid
+  id                        String     @id @default(uuid()) @db.Uuid
   /// @Field(() => String)
-  role                      UserRole       @default(GENERAL)
+  role                      UserRole   @default(GENERAL)
   /// @Validator.@IsEmail()
-  email                     String         @unique
+  email                     String     @unique
   /// @HideField({ output: true, input: true })
   password                  String
   /// @HideField({ output: false, input: true })
-  status                    UserStatus     @default(NOT_CONFIRMED)
+  status                    UserStatus @default(NOT_CONFIRMED)
   /// @HideField({ output: true, input: true })
-  createdAt                 DateTime       @default(now())
+  createdAt                 DateTime   @default(now())
   /// @HideField({ output: true, input: true })
-  updatedAt                 DateTime       @updatedAt
+  updatedAt                 DateTime   @updatedAt
   /// @HideField({ output: false, input: true })
   lastSignedInAt            DateTime?
   /// @HideField({ output: false, input: true })
@@ -79,8 +79,23 @@ model User {
   changePasswordSentAt      DateTime?
   /// @HideField({ output: true, input: true })
   changePasswordToken       String?
+
   /// @HideField({ output: true, input: true })
-  RefreshToken              RefreshToken[]
+  RefreshToken RefreshToken[]
+  /// @HideField({ output: true, input: true })
+  CancelUser   CancelUser[]
+}
+
+model CancelUser {
+  /// @HideField({ output: false, input: true })
+  id        String   @id @db.Uuid
+  /// @HideField({ output: true, input: true })
+  createdAt DateTime @default(now())
+  /// @HideField({ output: true, input: true })
+  updatedAt DateTime @updatedAt
+
+  /// @HideField({ output: true, input: true })
+  User User @relation(fields: [id], references: [id], onDelete: Cascade)
 }
 
 model RefreshToken {
@@ -89,8 +104,6 @@ model RefreshToken {
   /// @HideField({ output: true, input: true })
   token     String
   /// @HideField({ output: true, input: true })
-  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  /// @HideField({ output: true, input: true })
   userId    String   @db.Uuid
   /// @HideField({ output: true, input: true })
   createdAt DateTime @default(now())
@@ -98,6 +111,9 @@ model RefreshToken {
   updatedAt DateTime @updatedAt
   /// @HideField({ output: true, input: true })
   expiresIn DateTime
+
+  /// @HideField({ output: true, input: true })
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([id, userId])
 }
