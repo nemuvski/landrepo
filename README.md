@@ -65,6 +65,7 @@ cp packages/database/.env.example packages/database/.env
 主に次のコンテナを扱う。
 
 - `postgres` データベース
+- `MailDev` SMTP mock server
 
 ```bash
 # イメージ作成
