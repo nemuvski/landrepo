@@ -40,9 +40,11 @@ export function useSignOutHandler(): [() => Promise<void>, { loading: boolean }]
       )
       updater(null)
     } catch (error) {
-      console.error(error)
+      // NOTE: エラーでもクリアするようにしておく
+      updater(null)
       // NOTE: abortされると、error.responseがないためケアしておく
       if (error instanceof AxiosError && error.response) {
+        console.error(error)
         // @ts-ignore: statusはエラーコードが入る
         throw new ApiRouteError(error.response.status, error.response?.data.message)
       }
@@ -83,14 +85,15 @@ export async function signOutApiRoute(req: NextApiRequest, res: NextApiResponse)
         {}
       )
       .toPromise()
-    if (error) {
-      throw new ApiRouteError(401, trimGqlPrefixErrorMessage(error))
-    }
 
     // アクセストークン関連のクッキーを破棄
     // NOTE: 削除する際はオプションにpathを設定しておくこと
     destroyCookie({ res }, COOKIE_NAME_ACCESS_TOKEN, defaultCookieOptions)
     destroyCookie({ res }, COOKIE_NAME_REFRESH_TOKEN, defaultCookieOptions)
+
+    if (error) {
+      throw new ApiRouteError(401, trimGqlPrefixErrorMessage(error))
+    }
 
     res.status(200).json({ op: 'sign-out' })
   } catch (error) {
