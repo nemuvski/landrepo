@@ -112,6 +112,12 @@ export class AuthService {
         expiresIn: tokens.refreshTokenExpiresIn,
       },
     })
+    await this.usersService.update({
+      data: {
+        lastSignedInAt: { set: datetime().toISOString() },
+      },
+      where: { id: user.id },
+    })
     return {
       ...tokens,
       user,

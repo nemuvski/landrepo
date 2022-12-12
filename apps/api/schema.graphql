@@ -71,6 +71,7 @@ input SignUpUserInput {
 
 type User {
   _count: UserCount!
+  changeEmail: String
   changeEmailCompletedAt: DateTime
   changeEmailSentAt: DateTime
   changePasswordCompletedAt: DateTime
@@ -79,6 +80,7 @@ type User {
   """@Validator.@IsEmail()"""
   email: String!
   id: ID!
+  lastSignedInAt: DateTime
   role: UserRole!
   signUpConfirmationSentAt: DateTime
   signUpConfirmedAt: DateTime
@@ -91,12 +93,14 @@ type UserCount {
 
 type UserCountAggregate {
   _all: Int!
+  changeEmail: Int!
   changeEmailCompletedAt: Int!
   changeEmailSentAt: Int!
   changePasswordCompletedAt: Int!
   changePasswordSentAt: Int!
   email: Int!
   id: Int!
+  lastSignedInAt: Int!
   role: Int!
   signUpConfirmationSentAt: Int!
   signUpConfirmedAt: Int!
@@ -104,12 +108,14 @@ type UserCountAggregate {
 }
 
 type UserMaxAggregate {
+  changeEmail: String
   changeEmailCompletedAt: DateTime
   changeEmailSentAt: DateTime
   changePasswordCompletedAt: DateTime
   changePasswordSentAt: DateTime
   email: String
   id: String
+  lastSignedInAt: DateTime
   role: UserRole
   signUpConfirmationSentAt: DateTime
   signUpConfirmedAt: DateTime
@@ -117,12 +123,14 @@ type UserMaxAggregate {
 }
 
 type UserMinAggregate {
+  changeEmail: String
   changeEmailCompletedAt: DateTime
   changeEmailSentAt: DateTime
   changePasswordCompletedAt: DateTime
   changePasswordSentAt: DateTime
   email: String
   id: String
+  lastSignedInAt: DateTime
   role: UserRole
   signUpConfirmationSentAt: DateTime
   signUpConfirmedAt: DateTime

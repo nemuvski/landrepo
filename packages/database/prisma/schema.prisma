@@ -58,6 +58,8 @@ model User {
   /// @HideField({ output: true, input: true })
   updatedAt                 DateTime       @updatedAt
   /// @HideField({ output: false, input: true })
+  lastSignedInAt            DateTime?
+  /// @HideField({ output: false, input: true })
   signUpConfirmedAt         DateTime?
   /// @HideField({ output: false, input: true })
   signUpConfirmationSentAt  DateTime?
