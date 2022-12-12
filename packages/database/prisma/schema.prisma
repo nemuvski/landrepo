@@ -49,7 +49,7 @@ model User {
   role                      UserRole       @default(GENERAL)
   /// @Validator.@IsEmail()
   email                     String         @unique
-  /// @HideField()
+  /// @HideField({ output: true, input: true })
   password                  String
   /// @HideField({ output: false, input: true })
   status                    UserStatus     @default(NOT_CONFIRMED)
@@ -57,23 +57,23 @@ model User {
   createdAt                 DateTime       @default(now())
   /// @HideField({ output: true, input: true })
   updatedAt                 DateTime       @updatedAt
-  /// @HideField({ output: true, input: false })
+  /// @HideField({ output: false, input: true })
   signUpConfirmedAt         DateTime?
-  /// @HideField({ output: true, input: true })
+  /// @HideField({ output: false, input: true })
   signUpConfirmationSentAt  DateTime?
   /// @HideField({ output: true, input: true })
   signUpConfirmationToken   String?
-  /// @HideField({ output: true, input: true })
+  /// @HideField({ output: false, input: true })
   changeEmail               String?
-  /// @HideField({ output: true, input: true })
+  /// @HideField({ output: false, input: true })
   changeEmailCompletedAt    DateTime?
-  /// @HideField({ output: true, input: true })
+  /// @HideField({ output: false, input: true })
   changeEmailSentAt         DateTime?
   /// @HideField({ output: true, input: true })
   changeEmailToken          String?
-  /// @HideField({ output: true, input: true })
+  /// @HideField({ output: false, input: true })
   changePasswordCompletedAt DateTime?
-  /// @HideField({ output: true, input: true })
+  /// @HideField({ output: false, input: true })
   changePasswordSentAt      DateTime?
   /// @HideField({ output: true, input: true })
   changePasswordToken       String?

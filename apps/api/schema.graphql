@@ -14,6 +14,11 @@ input ClaimChangingPasswordInput {
   email: String!
 }
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Mutation {
   changePassword(input: ChangePasswordInput!): Boolean!
   claimChangingOwnEmail(input: ClaimChangingOwnEmailInput!): Boolean!
@@ -66,11 +71,17 @@ input SignUpUserInput {
 
 type User {
   _count: UserCount!
+  changeEmailCompletedAt: DateTime
+  changeEmailSentAt: DateTime
+  changePasswordCompletedAt: DateTime
+  changePasswordSentAt: DateTime
 
   """@Validator.@IsEmail()"""
   email: String!
   id: ID!
   role: UserRole!
+  signUpConfirmationSentAt: DateTime
+  signUpConfirmedAt: DateTime
   status: UserStatus!
 }
 
@@ -80,23 +91,41 @@ type UserCount {
 
 type UserCountAggregate {
   _all: Int!
+  changeEmailCompletedAt: Int!
+  changeEmailSentAt: Int!
+  changePasswordCompletedAt: Int!
+  changePasswordSentAt: Int!
   email: Int!
   id: Int!
   role: Int!
+  signUpConfirmationSentAt: Int!
+  signUpConfirmedAt: Int!
   status: Int!
 }
 
 type UserMaxAggregate {
+  changeEmailCompletedAt: DateTime
+  changeEmailSentAt: DateTime
+  changePasswordCompletedAt: DateTime
+  changePasswordSentAt: DateTime
   email: String
   id: String
   role: UserRole
+  signUpConfirmationSentAt: DateTime
+  signUpConfirmedAt: DateTime
   status: UserStatus
 }
 
 type UserMinAggregate {
+  changeEmailCompletedAt: DateTime
+  changeEmailSentAt: DateTime
+  changePasswordCompletedAt: DateTime
+  changePasswordSentAt: DateTime
   email: String
   id: String
   role: UserRole
+  signUpConfirmationSentAt: DateTime
+  signUpConfirmedAt: DateTime
   status: UserStatus
 }
 
@@ -106,9 +135,9 @@ enum UserRole {
 }
 
 enum UserStatus {
-  ACTIVE
   BANNED
-  INACTIVE
+  CANCELED
+  CONFIRMED
   NOT_CONFIRMED
 }
 
