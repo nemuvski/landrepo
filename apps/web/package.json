@@ -14,8 +14,6 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
-    "@itsumono/react": "^1.0.4",
-    "@itsumono/utils": "^1.6.0",
     "@mantine/core": "^5.9.2",
     "@mantine/dates": "^5.9.2",
     "@mantine/form": "^5.9.2",
@@ -52,8 +50,6 @@
     "@types/react": "18.0.26",
     "@types/react-dom": "^18.0.9",
     "@types/request-ip": "^0.0.37",
-    "eslint-config-next": "^13.0.6",
-    "jest": "^29.3.1",
-    "jest-environment-jsdom": "^29.3.1"
+    "eslint-config-next": "^13.0.6"
   }
 }

@@ -19,5 +19,5 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-empty-function': ['warn', { allow: ['constructors'] }],
   },
-  ignorePatterns: ['.eslintrc.js', 'dist', '@nestgraphql'],
+  ignorePatterns: ['.eslintrc.cjs', 'dist'],
 }

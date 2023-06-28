@@ -24,8 +24,7 @@
   "devDependencies": {
     "@project/tsconfig": "*",
     "prisma": "^4.16.1",
-    "prisma-nestjs-graphql": "^18.0.2",
-    "ts-node": "^10.9.1"
+    "prisma-nestjs-graphql": "^18.0.2"
   },
   "prisma": {
     "schema": "prisma/schema.prisma",
