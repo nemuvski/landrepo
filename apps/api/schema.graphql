@@ -94,8 +94,6 @@ type User {
   changeEmailSentAt: DateTime
   changePasswordCompletedAt: DateTime
   changePasswordSentAt: DateTime
-
-  """@Validator.@IsEmail()"""
   email: String!
   id: ID!
   lastSignedInAt: DateTime

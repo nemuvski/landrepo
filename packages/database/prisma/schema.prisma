@@ -47,11 +47,11 @@ model User {
   id                        String     @id @default(uuid()) @db.Uuid
   /// @Field(() => String)
   role                      UserRole   @default(GENERAL)
-  /// @Validator.@IsEmail()
+  /// @Field(() => String)
   email                     String     @unique
   /// @HideField({ output: true, input: true })
   password                  String
-  /// @HideField({ output: false, input: true })
+  /// @Field(() => String)
   status                    UserStatus @default(NOT_CONFIRMED)
   /// @HideField({ output: true, input: true })
   createdAt                 DateTime   @default(now())
@@ -87,7 +87,7 @@ model User {
 }
 
 model CancelUser {
-  /// @HideField({ output: false, input: true })
+  /// @Field(() => String)
   id        String   @id @db.Uuid
   /// @HideField({ output: true, input: true })
   createdAt DateTime @default(now())
@@ -99,7 +99,7 @@ model CancelUser {
 }
 
 model RefreshToken {
-  /// @HideField({ output: false, input: true })
+  /// @Field(() => String)
   id        String   @default(uuid()) @db.Uuid
   /// @HideField({ output: true, input: true })
   token     String
