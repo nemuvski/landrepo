@@ -69,4 +69,4 @@ export const AuthErrorMessage = {
   RestrictedSendingConfirmationEmail: 'restricted sending confirmation email',
 } as const
 
-export type AuthErrorMessageType = typeof AuthErrorMessage[keyof typeof AuthErrorMessage]
+export type AuthErrorMessageType = (typeof AuthErrorMessage)[keyof typeof AuthErrorMessage]

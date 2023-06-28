@@ -43,7 +43,7 @@ export const JwtOneTimePayloadUseField = {
   ChangePassword: 'change-password',
   ChangeEmail: 'change-email',
 } as const
-export type JwtOneTimePayloadUseFieldType = typeof JwtOneTimePayloadUseField[keyof typeof JwtOneTimePayloadUseField]
+export type JwtOneTimePayloadUseFieldType = (typeof JwtOneTimePayloadUseField)[keyof typeof JwtOneTimePayloadUseField]
 
 export interface Tokens {
   accessToken: string
