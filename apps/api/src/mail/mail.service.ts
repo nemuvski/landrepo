@@ -1,7 +1,7 @@
 import { buildPath } from '@itsumono/utils'
-import { MailerService } from '@nestjs-modules/mailer'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { MailerService } from '@nestjs-modules/mailer'
 import { PARAM_NAME_TOKEN, PATH_CHANGE_EMAIL, PATH_CHANGE_PASSWORD, PATH_SIGN_UP_CONFIRMATION } from '@project/auth'
 import type { ChangeEmailTemplateContext } from '$/mail/types/change-email.type'
 import type { ChangePasswordTemplateContext } from '$/mail/types/change-password.type'
