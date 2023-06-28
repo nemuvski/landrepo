@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": ">=16.14.0",
+    "node": ">=18.16.1",
     "yarn": "please-use-npm",
-    "npm": ">=8.3.0"
+    "npm": ">=9.5.1"
   },
   "workspaces": [
     "apps/*",
