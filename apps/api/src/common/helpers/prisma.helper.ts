@@ -1,5 +1,5 @@
 import { isString } from '@itsumono/utils'
-import type Prisma from '$/prisma'
+import type { Prisma } from '@project/database'
 
 export function normalizedStringFieldUpdateOperationsInput<T extends string | Prisma.StringFieldUpdateOperationsInput>(
   fieldValue: T

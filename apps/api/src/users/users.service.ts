@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { MAX_LENGTH_PASSWORD } from '@project/auth'
 import { UserStatus } from '@project/database'
-import type Prisma from '$/prisma'
-import type { User } from '@project/database'
+import type { User, Prisma } from '@project/database'
 import { hashValueWithBcrypt, hashValueWithSHA256 } from '$/common/helpers/hash.helper'
 import {
   normalizedNullableStringFieldUpdateOperationsInput,

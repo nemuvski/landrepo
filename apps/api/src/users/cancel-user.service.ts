@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import type Prisma from '$/prisma'
+import type { Prisma } from '@project/database'
 import { DatabaseService } from '$/database/database.service'
 
 @Injectable()
